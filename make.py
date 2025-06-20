@@ -35,5 +35,14 @@ files = glob.glob(f"{indir}/*.root")
 for f in tqdm(files, desc="Progress"):
     events = uproot.open(f)["Events"].arrays(selected_branches, library="ak")
     print(f"> Opened sample with {len(events)} events")
-    for event in events:
-        print(event)
+
+    ## Filter by trigger
+    #TrgOR
+    mask = ak.zeros_like(events[TRIGGER[0]], dtype=bool)
+    for trigger in TRIGGER:
+        mask = np.array(mask) | np.array(events[trigger])
+    events = events[mask]
+    
+    print(f"> {len(events)} events survive the filter")
+
+    print(events[0])
