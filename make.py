@@ -45,14 +45,15 @@ if isRereadingFullFile:
             mask = np.array(mask) | np.array(events[trigger])
         events = events[mask]
         
-        print(f"> {len(events)} events survive the filter") # 500_206 events survive
+        print(f"> {len(events)} events survive the filter") # 500_206 events survive from Vtx TrgOR
+        # 356_664 events survive NoVtx TrgNoVtx
         print("~\nFirst event: events[0]")
         print(events[0])
         with open (outdir+"/large_pickles/events[%s]Pickle.pkl"%(pickleIndex), "wb") as pickleOut:
             pickle.dump(events, pickleOut)
         pickleIndex += 1
 else: # if not rereading the original unfiltered file
-    with open (outdir+"/large_pickles/events0Pickle.pkl", "rb") as pickleIn:
+    with open (outdir+"/large_pickles/events[0]Pickle.pkl", "rb") as pickleIn:
         events = pickle.load(pickleIn)
     print(f"> Opened filtered sample with {len(events)} events") # 500_206 events
     print(events[0])
