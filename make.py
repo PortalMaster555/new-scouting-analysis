@@ -33,6 +33,7 @@ outdir = "/afs/cern.ch/user/d/dspringb/private/CMSSW_15_0_5/src/new-scouting-ana
 isRereadingFullFile = True
 if isRereadingFullFile:
     files = glob.glob(f"{indir}/*.root")
+    pickleIndex = 0
     for f in tqdm(files, desc="Progress"):
         events = uproot.open(f)["Events"].arrays(selected_branches, library="ak")
         print(f"> Opened sample with {len(events)} events") # 1_763_889 events
@@ -47,3 +48,6 @@ if isRereadingFullFile:
         print(f"> {len(events)} events survive the filter") # 500_206 events survive
         print("~\nFirst event: events[0]")
         print(events[0])
+        with open (outdir+"/pickles/events[%s]Pickle.pkl"%(pickleIndex), "wb") as pickleOut:
+            pickle.dump(events, pickleOut)
+        pickleIndex += 1
