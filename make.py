@@ -108,12 +108,27 @@ finally:
         print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
         print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
         print("~")
-        print("ScoutingMuon%sDisplacedVertex_x,y,z:"%(MUON), 
-         events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i],
-         events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i],
-         events["ScoutingMuon%sDisplacedVertex_z"%(MUON)][i])
+
         print("ScoutingMuon%s_trk_vx,vy,vz"%(MUON), 
          events["ScoutingMuon%s_trk_vx"%(MUON)][i],
          events["ScoutingMuon%s_trk_vy"%(MUON)][i],
          events["ScoutingMuon%s_trk_vz"%(MUON)][i])
+
+        vertexX = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][0]
+        vertexY = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][0]
+        vertexZ = events["ScoutingMuon%sDisplacedVertex_z"%(MUON)][i][0]
+        print("Vertex pos:", vertexX, vertexY, vertexZ)
+
+        offsetList = []
+        for j in range(len(events["ScoutingMuon%s_trk_vx"%(MUON)][i])):
+            trkX = events["ScoutingMuon%s_trk_vx"%(MUON)][i][j]
+            trkY = events["ScoutingMuon%s_trk_vy"%(MUON)][i][j]
+            trkZ = events["ScoutingMuon%s_trk_vz"%(MUON)][i][j]
+            dx = vertexX - trkX
+            dy = vertexY - trkY
+            dz = vertexZ - trkZ
+            r = np.sqrt(dx**2 + dy**2 + dz**2)
+            offsetList.append(r)
         print("\n")
+        print(offsetList)
+            
