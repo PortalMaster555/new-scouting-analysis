@@ -92,8 +92,8 @@ finally:
 
     # lxy_range = (1e-5, 1e2)
     # h_lxy = hist.new.Reg(1000000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
-    lxy_range = (0, 0.1)
-    h_lxy = hist.new.Reg(1000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
+    lxy_range = (0, 7.5)
+    h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
 
     ## Remove muons of pt less than 20 and |eta| greater than/eq to 2.4
     mask_pt = events["ScoutingMuonNoVtx_pt"] >= 5
