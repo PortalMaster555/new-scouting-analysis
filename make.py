@@ -15,11 +15,11 @@ try:
     if sys.argv[1].lower() == "--vtx":
         MUON = "Vtx"
         TRIGGER = ["DST_PFScouting_DoubleMuonVtx"]
-        pickleString = "zoom_2025/histos_2025_TrgVtx_Vtx.pkl"
+        # pickleString = "zoom_2025/histos_2025_TrgVtx_Vtx.pkl"
     elif sys.argv[1].lower() == "--novtx":
         MUON = "NoVtx"
         TRIGGER = ["DST_PFScouting_DoubleMuonNoVtx"]
-        pickleString = "zoom_2025/histos_2025_TrgNoVtx_NoVtx.pkl"
+        # pickleString = "zoom_2025/histos_2025_TrgNoVtx_NoVtx.pkl"
     else:
         print("Please supply only --vtx or --novtx.")
         sys.exit(1)
@@ -90,6 +90,9 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
+    lxy_range = (0.0001, 100)
+    h_lxy = hist.new.Reg(1000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
+
     ## Remove muons of pt less than 20 and |eta| greater than/eq to 2.4
     mask_pt = events["ScoutingMuonNoVtx_pt"] >= 20
     mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
@@ -125,8 +128,8 @@ finally:
     events = events[keep_mask]
     print(f"> Events with at least one pair of opposite charges: {len(events)}") 
 
-    for i in tqdm(range(60)):
-    # for i in tqdm(range(len(events))):
+    # for i in tqdm(range(60)):
+    for i in tqdm(range(len(events))):
         print("~~~~~~~~~")
         print("Num Muons:", events["nScoutingMuon%s"%(MUON)][i])
         print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
@@ -180,9 +183,17 @@ finally:
                 print("TO-DO: FILTER THE CORRECT PV FROM THE LIST OF SIZE:", events["nScoutingPrimaryVertex"][i])
                 pv_x = events["ScoutingPrimaryVertex_x"][i][0]
                 pv_y = events["ScoutingPrimaryVertex_y"][i][0]
-                print(events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i])
-                print(events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i])
-
+                print("TO-DO: GET CORRECT DISPLACED VERTEX FROM LIST")
+                sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][0]
+                sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][0]
+                
+                dx = sv_x - pv_x
+                dy = sv_y - pv_y
+                lxy = np.sqrt(dx**2 + dy**2)
+                h_lxy.fill(lxy=lxy)
+with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
+    pickle.dump(h_lxy, pickleOut)
+    pickle.dump(lxy_range, pickleOut)
 
 
 
