@@ -46,6 +46,7 @@ finally:
         selected_branches.append("ScoutingMuon%s_charge"%(MUON))
         selected_branches.append("nScoutingMuon%sVtxIndx"%(MUON))
         selected_branches.append("ScoutingMuon%sVtxIndx_vtxIndx"%(MUON))
+        selected_branches.append("ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON))
         files = glob.glob(f"{indir}/*.root")
         pickleIndex = 0
         for f in tqdm(files, desc="Progress"):
@@ -80,6 +81,8 @@ finally:
     ## Filter by having a displaced vertex reconstruction
     events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] > 0]
     print(f"> Events with a displaced vertex reco: {len(events)}") 
+
+    ## Filter 
     
     ## Print all charges as a test
     # for i in tqdm(range(len(events))):
@@ -89,4 +92,5 @@ finally:
         print("Charges", events["ScoutingMuon%s_charge"%(MUON)][i])
         print("nScoutingMuon%s_VtxIndx: "%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
         print("ScoutingMuon%sVtxIndx_vtxIndx: "%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
+        print("ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
         print("\n")
