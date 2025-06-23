@@ -183,8 +183,9 @@ finally:
             if deltaR > 0.2: # remove duplicate muons
                 print("deltaR > 0.2.")
                 print("TO-DO: FILTER THE CORRECT PV FROM THE LIST OF SIZE:", events["nScoutingPrimaryVertex"][i])
-                pv_x = events["ScoutingPrimaryVertex_x"][i][0]
-                pv_y = events["ScoutingPrimaryVertex_y"][i][0]
+                # pv_x = events["ScoutingPrimaryVertex_x"][i][0]
+                # pv_y = events["ScoutingPrimaryVertex_y"][i][0]
+                pv_x, pv_y = 0,0  #set to center of detector for testing
                 print("TO-DO: GET CORRECT DISPLACED VERTEX FROM LIST")
                 sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][0]
                 sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][0]
