@@ -177,11 +177,11 @@ finally:
             deltaR = np.sqrt(deltaEta**2 + deltaPhi**2)
             if deltaR > 0.2: # remove duplicate muons
                 print("deltaR > 0.2.")
-                print(indices)
-                print(events["nScoutingPrimaryVertex"][i])
-                print(events["ScoutingPrimaryVertex_x"][i][indices])
-                print(events["ScoutingPrimaryVertex_y"][i][indices])
-                print(events["ScoutingPrimaryVertex_z"][i][indices])
+                print("TO-DO: FILTER THE CORRECT PV FROM THE LIST OF SIZE:", events["nScoutingPrimaryVertex"][i])
+                pv_x = events["ScoutingPrimaryVertex_x"][i][0]
+                pv_y = events["ScoutingPrimaryVertex_y"][i][0]
+                print(events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i])
+                print(events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i])
 
 
 
