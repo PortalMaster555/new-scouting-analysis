@@ -159,5 +159,17 @@ finally:
             print(events[f"ScoutingMuon{MUON}_pt"][i][sorted_indices])
             closestMuonIndex_2D_List.append(sorted_indices[:2])
         print("Closest Indices:", closestMuonIndex_2D_List)
+
+        deltaRMask = []
         for indices in closestMuonIndex_2D_List:
-            print(events[f"ScoutingMuon{MUON}_charge"][i][indices])
+            lowestEtas = events[f"ScoutingMuon{MUON}_eta"][i][indices]
+            lowestPhis = events[f"ScoutingMuon{MUON}_phi"][i][indices]
+            eta1, eta2 = lowestEtas[0], lowestEtas[1]
+            phi1, phi2 = lowestPhis[0], lowestPhis[1]
+            deltaEta = np.abs(eta1 - eta2)
+            deltaPhi = np.abs(phi1 - phi2)
+            deltaPhi = np.where(deltaPhi > np.pi, 2 * np.pi - deltaPhi, deltaPhi)
+            deltaR = np.sqrt(deltaEta**2 + deltaPhi**2)
+            deltaRMask.append(deltaR > 0.2)
+        print("DeltaRMask", deltaRMask)
+        
