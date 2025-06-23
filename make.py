@@ -9,6 +9,8 @@ import pickle
 import sys
 from tqdm import tqdm
 
+np.set_printoptions(precision=8, suppress=False)
+
 try:
     if sys.argv[1].lower() == "--vtx":
         MUON = "Vtx"
@@ -82,9 +84,27 @@ finally:
             events = pickle.load(pickleIn)
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 
+
+    ## Remove muons of pt less than 20 and |eta| greater than/eq to 2.4
+    mask_pt = events["ScoutingMuonNoVtx_pt"] >= 20
+    mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
+    combined_mask = mask_pt & mask_eta
+    print(combined_mask)
+    muon_fields = [
+    "_pt", "_eta", "_phi", "_charge",
+    "_trk_vx", "_trk_vy", "_trk_vz"]
+    
+    for field in muon_fields:
+        key = f"ScoutingMuonNoVtx{field}"
+        print(len(events[key]))
+        events[key] = events[key][combined_mask]
+    print("Keyscan end")
+    events["nScoutingMuonNoVtx"] = ak.num(events["ScoutingMuonNoVtx_pt"])
+###
+    print("Now filtering by number of muons:")
     ## Filter by number of muons
     events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
-    print(f"> Events with 2+ muons: {len(events)}") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
+    print(f"> Events with 2+ muons: {len(events)}") 
     print(ak.fields(events[0])) # get list of fields again since i forgot
     # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
 
@@ -101,13 +121,13 @@ finally:
     print(f"> Events with at least one pair of opposite charges: {len(events)}") 
 
     for i in tqdm(range(60)):
+        print("~~~~~~~~~")
         print("Num Muons:", events["nScoutingMuon%s"%(MUON)][i])
         print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
         print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
         print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
         print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
         print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
-        print("~")
 
         print("ScoutingMuon%s_trk_vx,vy,vz"%(MUON), 
          events["ScoutingMuon%s_trk_vx"%(MUON)][i],
@@ -129,14 +149,15 @@ finally:
                 dz = vertexZ - trkZ
                 r = np.sqrt(dx**2 + dy**2 + dz**2)
                 offsetList.append(r)
-
+            
             # print(offsetList)
             offsetArray = np.array(offsetList)
             sorted_indices = np.argsort(offsetArray)
             print(offsetArray[sorted_indices])
             print(events[f"ScoutingMuon{MUON}_charge"][i][sorted_indices])
+            print(events[f"ScoutingMuon{MUON}_eta"][i][sorted_indices])
+            print(events[f"ScoutingMuon{MUON}_pt"][i][sorted_indices])
             closestMuonIndex_2D_List.append(sorted_indices[:2])
-        # print("Closest Indices:", closestMuonIndex_2D_List)
-        # for indices in closestMuonIndex_2D_List:
-        #     print(events[f"ScoutingMuon{MUON}_charge"][i][indices])
-        print("\n")
+        print("Closest Indices:", closestMuonIndex_2D_List)
+        for indices in closestMuonIndex_2D_List:
+            print(events[f"ScoutingMuon{MUON}_charge"][i][indices])
