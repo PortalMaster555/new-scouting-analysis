@@ -59,6 +59,11 @@ finally:
         selected_branches.append("ScoutingMuonNoVtx_trk_vy")
         selected_branches.append("ScoutingMuonNoVtx_trk_vz")
 
+        selected_branches.append("nScoutingPrimaryVertex")
+        selected_branches.append("ScoutingPrimaryVertex_x")
+        selected_branches.append("ScoutingPrimaryVertex_y")
+        selected_branches.append("ScoutingPrimaryVertex_z")
+
         files = glob.glob(f"{indir}/*.root")
         pickleIndex = 0
         for f in tqdm(files, desc="Progress"):
@@ -83,20 +88,20 @@ finally:
         with open (outdir+"/large_pickles/events%sPickle.pkl"%(MUON), "rb") as pickleIn:
             events = pickle.load(pickleIn)
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
-
+###################################################
 
     ## Remove muons of pt less than 20 and |eta| greater than/eq to 2.4
     mask_pt = events["ScoutingMuonNoVtx_pt"] >= 20
     mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
     combined_mask = mask_pt & mask_eta
-    print(combined_mask)
+    # print(combined_mask)
     muon_fields = [
     "_pt", "_eta", "_phi", "_charge",
     "_trk_vx", "_trk_vy", "_trk_vz"]
     
     for field in muon_fields:
         key = f"ScoutingMuonNoVtx{field}"
-        print(len(events[key]))
+        # print(len(events[key]))
         events[key] = events[key][combined_mask]
     print("Keyscan end")
     events["nScoutingMuonNoVtx"] = ak.num(events["ScoutingMuonNoVtx_pt"])
@@ -104,8 +109,8 @@ finally:
     print("Now filtering by number of muons:")
     ## Filter by number of muons
     events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
-    print(f"> Events with 2+ muons: {len(events)}") 
-    print(ak.fields(events[0])) # get list of fields again since i forgot
+    print(f"> Significant events with 2+ muons: {len(events)}") 
+    # print(ak.fields(events[0])) # get list of fields again since i forgot
     # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
 
     ## Filter by having a displaced vertex reconstruction
@@ -121,6 +126,7 @@ finally:
     print(f"> Events with at least one pair of opposite charges: {len(events)}") 
 
     for i in tqdm(range(60)):
+    # for i in tqdm(range(len(events))):
         print("~~~~~~~~~")
         print("Num Muons:", events["nScoutingMuon%s"%(MUON)][i])
         print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
@@ -160,7 +166,6 @@ finally:
             closestMuonIndex_2D_List.append(sorted_indices[:2])
         print("Closest Indices:", closestMuonIndex_2D_List)
 
-        deltaRMask = []
         for indices in closestMuonIndex_2D_List:
             lowestEtas = events[f"ScoutingMuon{MUON}_eta"][i][indices]
             lowestPhis = events[f"ScoutingMuon{MUON}_phi"][i][indices]
@@ -170,6 +175,14 @@ finally:
             deltaPhi = np.abs(phi1 - phi2)
             deltaPhi = np.where(deltaPhi > np.pi, 2 * np.pi - deltaPhi, deltaPhi)
             deltaR = np.sqrt(deltaEta**2 + deltaPhi**2)
-            deltaRMask.append(deltaR > 0.2)
-        print("DeltaRMask", deltaRMask)
-        
+            if deltaR > 0.2: # remove duplicate muons
+                print("deltaR > 0.2.")
+                print(indices)
+                print(events["nScoutingPrimaryVertex"][i])
+                print(events["ScoutingPrimaryVertex_x"][i][indices])
+                print(events["ScoutingPrimaryVertex_y"][i][indices])
+                print(events["ScoutingPrimaryVertex_z"][i][indices])
+
+
+
+
