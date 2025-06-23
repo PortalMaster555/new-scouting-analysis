@@ -114,21 +114,21 @@ finally:
          events["ScoutingMuon%s_trk_vy"%(MUON)][i],
          events["ScoutingMuon%s_trk_vz"%(MUON)][i])
 
-        vertexX = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][0]
-        vertexY = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][0]
-        vertexZ = events["ScoutingMuon%sDisplacedVertex_z"%(MUON)][i][0]
-        print("Vertex pos:", vertexX, vertexY, vertexZ)
+        for vtxIndx in range(len(events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i])):
+            vertexX = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][vtxIndx]
+            vertexY = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][vtxIndx]
+            vertexZ = events["ScoutingMuon%sDisplacedVertex_z"%(MUON)][i][vtxIndx]
+            print("Vertex pos:", vertexX, vertexY, vertexZ)
+            offsetList = []
+            for j in range(len(events["ScoutingMuon%s_trk_vx"%(MUON)][i])):
+                trkX = events["ScoutingMuon%s_trk_vx"%(MUON)][i][j]
+                trkY = events["ScoutingMuon%s_trk_vy"%(MUON)][i][j]
+                trkZ = events["ScoutingMuon%s_trk_vz"%(MUON)][i][j]
+                dx = vertexX - trkX
+                dy = vertexY - trkY
+                dz = vertexZ - trkZ
+                r = np.sqrt(dx**2 + dy**2 + dz**2)
+                offsetList.append(r)
 
-        offsetList = []
-        for j in range(len(events["ScoutingMuon%s_trk_vx"%(MUON)][i])):
-            trkX = events["ScoutingMuon%s_trk_vx"%(MUON)][i][j]
-            trkY = events["ScoutingMuon%s_trk_vy"%(MUON)][i][j]
-            trkZ = events["ScoutingMuon%s_trk_vz"%(MUON)][i][j]
-            dx = vertexX - trkX
-            dy = vertexY - trkY
-            dz = vertexZ - trkZ
-            r = np.sqrt(dx**2 + dy**2 + dz**2)
-            offsetList.append(r)
+            print(offsetList)
         print("\n")
-        print(offsetList)
-            
