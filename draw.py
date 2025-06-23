@@ -43,10 +43,6 @@ nonzero_vals = bin_values[bin_values > 0]
 yMin = 10**np.floor(np.log10(nonzero_vals.min()))
 yMax = 10**np.ceil(np.log10(nonzero_vals.max()))
 
-print("Printing yvals")
-print(bin_values[min_idx], np.log10(bin_values[min_idx]), yMin)
-print(bin_values[max_idx], np.log10(bin_values[max_idx]), yMax)
-print("Done")
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("lxy")
 ax.set_ylabel("Number of events")
