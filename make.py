@@ -90,13 +90,11 @@ finally:
     events = events[keep_mask]
     print(f"> Events with at least one pair of opposite charges: {len(events)}") 
 
-    for i in tqdm(range(20)):
+    for i in tqdm(range(60)):
         print("Num Muons:", events["nScoutingMuon%s"%(MUON)][i])
         print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
         print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
         print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
         print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
         print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
-        if ak.all(events["ScoutingMuon%s_charge"%(MUON)][i] == events["ScoutingMuon%s_charge"%(MUON)][i][0], axis=None):
-            print("Same charges")
         print("\n")
