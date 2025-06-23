@@ -55,5 +55,10 @@ if isRereadingFullFile:
 else: # if not rereading the original unfiltered file
     with open (outdir+"/large_pickles/events%sPickle.pkl"%(MUON), "rb") as pickleIn:
         events = pickle.load(pickleIn)
-    print(f"> Opened filtered sample with {len(events)} events") # 500_206 events
-    print(events[0])
+    print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
+
+## Filter by number of muons
+events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
+
+print(ak.fields(events[0])) # get list of fields again since i forgot
+print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
