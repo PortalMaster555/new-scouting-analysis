@@ -96,7 +96,7 @@ finally:
     h_lxy = hist.new.Reg(1000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
 
     ## Remove muons of pt less than 20 and |eta| greater than/eq to 2.4
-    mask_pt = events["ScoutingMuonNoVtx_pt"] >= 20
+    mask_pt = events["ScoutingMuonNoVtx_pt"] >= 5
     mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
     combined_mask = mask_pt & mask_eta
     # print(combined_mask)
