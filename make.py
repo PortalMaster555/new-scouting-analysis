@@ -32,7 +32,7 @@ try:
     if sys.argv[2].lower() == "--reread":
         isRereadingFullFile = True
 except IndexError: # if --reread not specified, assume using same file.
-    print("Using stored data from "+ outdir + "/large_pickles/events[%s]Pickle.pkl"%(MUON))
+    print("Using stored data from "+ outdir + "/large_pickles/events%sPickle.pkl"%(MUON))
 finally:
     if isRereadingFullFile:
         ## Open the file
@@ -44,6 +44,8 @@ finally:
         selected_branches.append("ScoutingMuon%s_eta"%(MUON))
         selected_branches.append("ScoutingMuon%s_phi"%(MUON))
         selected_branches.append("ScoutingMuon%s_charge"%(MUON))
+        selected_branches.append("nScoutingMuon%sVtxIndx"%(MUON))
+        selected_branches.append("ScoutingMuon%sVtxIndx_vtxIndx"%(MUON))
         files = glob.glob(f"{indir}/*.root")
         pickleIndex = 0
         for f in tqdm(files, desc="Progress"):
@@ -61,7 +63,7 @@ finally:
             # 356_664 events survive NoVtx TrgNoVtx
             print("~\nFirst event: events[0]")
             print(events[0])
-            with open (outdir+"/large_pickles/events[%s]Pickle.pkl"%(MUON), "wb") as pickleOut:
+            with open (outdir+"/large_pickles/events%sPickle.pkl"%(MUON), "wb") as pickleOut:
                 pickle.dump(events, pickleOut)
             pickleIndex += 1
     else: # if not rereading the original unfiltered file
@@ -72,7 +74,7 @@ finally:
     ## Filter by number of muons
     events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
     print(f"> Events with 2+ muons: {len(events)}") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
-    # print(ak.fields(events[0])) # get list of fields again since i forgot
+    print(ak.fields(events[0])) # get list of fields again since i forgot
     # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
 
     ## Filter by having a displaced vertex reconstruction
@@ -80,7 +82,11 @@ finally:
     print(f"> Events with a displaced vertex reco: {len(events)}") 
     
     ## Print all charges as a test
-    for i in tqdm(range(len(events))):
-        print(events["ScoutingMuon%s_charge"%(MUON)][i])
-        print(events["nScoutingMuon%s"%(MUON)])
+    # for i in tqdm(range(len(events))):
+    for i in tqdm(range(20)):
+        print("Num Muons ", events["nScoutingMuon%s"%(MUON)][i])
+        print("Num Displaced Vertices", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
+        print("Charges", events["ScoutingMuon%s_charge"%(MUON)][i])
+        print("nScoutingMuon%s_VtxIndx: "%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
+        print("ScoutingMuon%sVtxIndx_vtxIndx: "%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
         print("\n")
