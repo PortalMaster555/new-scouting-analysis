@@ -131,8 +131,9 @@ finally:
                 offsetList.append(r)
 
             # print(offsetList)
-            sorted_indices = np.argsort(offsetList)
-            print(offsetList[sorted_indices])
+            offsetArray = np.array(offsetList)
+            sorted_indices = np.argsort(offsetArray)
+            print(offsetArray[sorted_indices])
             print(events[f"ScoutingMuon{MUON}_charge"][i][sorted_indices])
             closestMuonIndex_2D_List.append(sorted_indices[:2])
         # print("Closest Indices:", closestMuonIndex_2D_List)
