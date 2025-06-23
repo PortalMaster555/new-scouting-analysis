@@ -44,9 +44,19 @@ finally:
         selected_branches.append("ScoutingMuon%s_eta"%(MUON))
         selected_branches.append("ScoutingMuon%s_phi"%(MUON))
         selected_branches.append("ScoutingMuon%s_charge"%(MUON))
+
         selected_branches.append("nScoutingMuon%sVtxIndx"%(MUON))
         selected_branches.append("ScoutingMuon%sVtxIndx_vtxIndx"%(MUON))
         selected_branches.append("ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON))
+
+        selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_x")
+        selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_y")
+        selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_z")
+
+        selected_branches.append("ScoutingMuonNoVtx_trk_vx")
+        selected_branches.append("ScoutingMuonNoVtx_trk_vy")
+        selected_branches.append("ScoutingMuonNoVtx_trk_vz")
+
         files = glob.glob(f"{indir}/*.root")
         pickleIndex = 0
         for f in tqdm(files, desc="Progress"):
@@ -97,4 +107,13 @@ finally:
         print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
         print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
         print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
+        print("~")
+        print("ScoutingMuon%sDisplacedVertex_x,y,z:"%(MUON), 
+         events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i],
+         events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i],
+         events["ScoutingMuon%sDisplacedVertex_z"%(MUON)][i])
+        print("ScoutingMuon%s_trk_vx,vy,vz"%(MUON), 
+         events["ScoutingMuon%s_trk_vx"%(MUON)][i],
+         events["ScoutingMuon%s_trk_vy"%(MUON)][i],
+         events["ScoutingMuon%s_trk_vz"%(MUON)][i])
         print("\n")
