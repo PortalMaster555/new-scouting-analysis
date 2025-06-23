@@ -90,8 +90,10 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
-    lxy_range = (1e-5, 1e2)
-    h_lxy = hist.new.Reg(1000000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
+    # lxy_range = (1e-5, 1e2)
+    # h_lxy = hist.new.Reg(1000000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
+    lxy_range = (0, 0.1)
+    h_lxy = hist.new.Reg(1000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
 
     ## Remove muons of pt less than 20 and |eta| greater than/eq to 2.4
     mask_pt = events["ScoutingMuonNoVtx_pt"] >= 20
