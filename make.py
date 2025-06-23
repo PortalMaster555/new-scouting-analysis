@@ -113,7 +113,7 @@ finally:
          events["ScoutingMuon%s_trk_vx"%(MUON)][i],
          events["ScoutingMuon%s_trk_vy"%(MUON)][i],
          events["ScoutingMuon%s_trk_vz"%(MUON)][i])
-
+        closestMuonIndex_2D_List = []
         for vtxIndx in range(len(events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i])):
             vertexX = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][vtxIndx]
             vertexY = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][vtxIndx]
@@ -130,5 +130,12 @@ finally:
                 r = np.sqrt(dx**2 + dy**2 + dz**2)
                 offsetList.append(r)
 
-            print(offsetList)
+            # print(offsetList)
+            sorted_indices = np.argsort(offsetList)
+            print(offsetList[sorted_indices])
+            print(events[f"ScoutingMuon{MUON}_charge"][i][sorted_indices])
+            closestMuonIndex_2D_List.append(sorted_indices[:2])
+        # print("Closest Indices:", closestMuonIndex_2D_List)
+        # for indices in closestMuonIndex_2D_List:
+        #     print(events[f"ScoutingMuon{MUON}_charge"][i][indices])
         print("\n")
