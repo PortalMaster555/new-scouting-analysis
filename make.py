@@ -148,7 +148,8 @@ h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").D
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
 # for i in tqdm(range(10)):
-for i in tqdm(range(55, len(events))):  
+rejected = 0
+for i in tqdm(range(0, len(events))):  
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
 
     print("~~~~~~~~~")
@@ -181,16 +182,24 @@ for i in tqdm(range(55, len(events))):
 
     # get indices of non-None entries (i.e. the proper vertices)
     # nonNoneIndices = ak.where(~ak.is_none(vertexArrayByMuonIndex))[0]
-    maxVertexIdx = ak.max(vertexArrayByMuonIndex)
-    indexArray = []
-    for vertexIdx in range(maxVertexIdx + 1):
-        # ak.where returns a tuple -> unpack
-        indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
-    indexArray = ak.Array(indexArray)
-    # print("Index Array:", indexArray)
-    # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
-    # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
+    # maxVertexIdx = ak.max(vertexArrayByMuonIndex)
 
+    # stopgap
+    try:
+        maxVertexIdx = ak.max(vertexArrayByMuonIndex)
+        print(maxVertexIdx)
+        indexArray = []
+        for vertexIdx in range(maxVertexIdx + 1):
+            # ak.where returns a tuple -> unpack
+            indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
+        indexArray = ak.Array(indexArray)
+        # print("Index Array:", indexArray)
+        # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
+        # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
+    except ValueError:
+        print("Iteration %d failed due to a ValueError (you have to make a choice for the vertex!)"%(i))
+        rejected += 1
+        continue
 
     # From https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideOfflinePrimaryVertexProduction:
     '''
@@ -220,6 +229,7 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickle
     pickle.dump(h_lxy, pickleOut)
     pickle.dump(lxy_range, pickleOut)
 
+print(rejected)
 ##################################################
 '''
             lowestEtas = events[f"ScoutingMuon{MUON}_eta"][i][indices]
