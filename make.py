@@ -147,7 +147,7 @@ h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").D
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
-for i in tqdm(range(50)):
+for i in tqdm(range(10)):
 # for i in tqdm(range(len(events))):  
     print("~~~~~~~~~")
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
@@ -195,6 +195,19 @@ for i in tqdm(range(50)):
         indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
     indexArray = ak.Array(indexArray)
     print("Index Array:", indexArray)
+    # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
+    # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
+
+    print("TO-DO: FILTER THE CORRECT PV FROM THE LIST OF SIZE:", events["nScoutingPrimaryVertex"][i])
+    pv_x = events["ScoutingPrimaryVertex_x"][i]
+    pv_y = events["ScoutingPrimaryVertex_y"][i]
+    print("PV_x", pv_x)
+    print("PV_y", pv_y)
+    print("TO-DO: GET CORRECT DISPLACED VERTEX FROM LIST")
+    sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i]
+    sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i]
+    print("SV_x", sv_x)
+    print("SV_y", sv_y)
 
 ##################################################
 '''
