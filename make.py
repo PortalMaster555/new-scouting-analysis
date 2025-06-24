@@ -94,8 +94,9 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
-print("* Allow |eta| < 2.4 *")
+
 # Remove muons where |eta| is greater than/eq to 2.4
+print("*Allow |eta| < 2.4*")
 # mask_pt = events["ScoutingMuonNoVtx_pt"] >= 5
 mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
 # combined_mask = mask_pt & mask_eta
@@ -110,21 +111,32 @@ for field in muon_fields:
     # print(len(events[key]))
     events[key] = events[key][combined_mask]
 events["nScoutingMuonNoVtx"] = ak.num(events["ScoutingMuonNoVtx_pt"])
-print("Filter by eta successful.")
+print("> Filter by eta successful.")
 
-print("* Allow nMuons >= 2 *")
+
 ## Filter by number of muons
+print("*Allow nMuons >= 2*")
 events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
 print(f"> Significant events with 2+ muons: {len(events)}") 
 # print(ak.fields(events[0])) # get list of fields again since i forgot
 # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
 
-print("* Allow nDisplacedVertex >= 1 *")
+
 ## Filter by having a displaced vertex reconstruction
+print("*Allow nDisplacedVertex >= 1*")
 events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] >= 1]
 print(f"> Events with a displaced vertex reco: {len(events)}") 
 # events = events[events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)] == True]
 # print(f"> Events with a valid displaced vertex reco: {len(events)}") 
+
+## Filter by requiring at least one pair of opposite charges
+print("*Allow opposite-charge-containing events*")
+charges = events[f"ScoutingMuon{MUON}_charge"]
+has_pos = ak.any(charges > 0, axis=1)
+has_neg = ak.any(charges < 0, axis=1)
+keep_mask = has_pos & has_neg
+events = events[keep_mask]
+print(f"> Events with at least one pair of opposite charges: {len(events)}") 
 
 # Addtl. pre-filtering goes here.
 
@@ -175,25 +187,6 @@ for i in tqdm(range(10)):
 ##################################################
 '''
 
-###
-    print("Now filtering by number of muons:")
-    ## Filter by number of muons
-    events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
-    print(f"> Significant events with 2+ muons: {len(events)}") 
-    # print(ak.fields(events[0])) # get list of fields again since i forgot
-    # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
-
-    ## Filter by having a displaced vertex reconstruction
-    events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] > 0]
-    print(f"> Events with a displaced vertex reco: {len(events)}") 
-
-    ## Filter by requiring at least one pair of opposite charges
-    charges = events[f"ScoutingMuon{MUON}_charge"]
-    has_pos = ak.any(charges > 0, axis=1)
-    has_neg = ak.any(charges < 0, axis=1)
-    keep_mask = has_pos & has_neg
-    events = events[keep_mask]
-    print(f"> Events with at least one pair of opposite charges: {len(events)}") 
 
     # for i in tqdm(range(60)):
     for i in tqdm(range(len(events))):
