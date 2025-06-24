@@ -107,6 +107,9 @@ print(f"> Events with a displaced vertex reco: {len(events)}")
 # events = events[events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)] == True]
 # print(f"> Events with a valid displaced vertex reco: {len(events)}") 
 
+# nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
+
+oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
 for i in tqdm(range(3)):
 # for i in tqdm(range(len(events))):  
@@ -114,23 +117,21 @@ for i in tqdm(range(3)):
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
     print("Num Muons:", nMuons)
     print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
-    print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
     print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
+    print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
+
     # print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
     # print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
 
-    nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
-    oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
-    print(nVtxIndxString, i, events[nVtxIndxString][i])
-    print(oVtxIndxString, i, events[oVtxIndxString][i])
-    print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
+    # print(nVtxIndxString, i, events[nVtxIndxString][i])
+    # print(oVtxIndxString, i, events[oVtxIndxString][i])
+    # print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
 
-    oVtxIndxArray = events[oVtxIndxString][i]
-    
-    print("* Begin *")
+    # print("* Begin *")
     vertexListByMuonIndex = [] # corresponds directly to, for example, charge entries
+    oVtxIndxArray = events[oVtxIndxString][i]
     for n in range(nMuons):
-        print("The %dth entry in oVtxIndxArray is:"%(n), oVtxIndxArray[n])
+        # print("The %dth entry in oVtxIndxArray is:"%(n), oVtxIndxArray[n])
         current_offset = oVtxIndxArray[n]
         if n != (nMuons-1): # if NOT the final entry, use explicit list slicing
             # print("%d is not the final entry"%(n))
@@ -138,11 +139,11 @@ for i in tqdm(range(3)):
             vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset:next_offset] # exclusive
         else: # if it is the final entry, go to end of list
             vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset::]
-        print("Vertex Slice for %d is:"%(n), vertexSlice)
+        # print("Vertex Slice for %d is:"%(n), vertexSlice)
         vertexListByMuonIndex.append(vertexSlice)
-    print("*  End  *")
+    # print("*  End  *")
     vertexArrayByMuonIndex = ak.Array(vertexListByMuonIndex)
-    print(vertexArrayByMuonIndex)
+    print("Vertices:", vertexArrayByMuonIndex)
 
 
 
