@@ -90,6 +90,40 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
+for i in tqdm(range(20)):
+# for i in tqdm(range(len(events))):  
+    print("Now filtering by number of muons:")
+    ## Filter by number of muons
+    events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
+    print(f"> Significant events with 2+ muons: {len(events)}") 
+    print(ak.fields(events[0])) # get list of fields again since i forgot
+    # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
+
+    ## Filter by having a displaced vertex reconstruction
+    events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] > 0]
+    print(f"> Events with a displaced vertex reco: {len(events)}") 
+
+    print("~~~~~~~~~")
+    print("Num Muons:", events["nScoutingMuon%s"%(MUON)][i])
+    print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
+    print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
+    print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
+    print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
+    print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
+
+    print("ScoutingMuon%s_trk_vx,vy,vz"%(MUON), 
+        events["ScoutingMuon%s_trk_vx"%(MUON)][i],
+        events["ScoutingMuon%s_trk_vy"%(MUON)][i],
+        events["ScoutingMuon%s_trk_vz"%(MUON)][i])
+
+
+
+
+
+
+
+##################################################
+'''
     # lxy_range = (1e-5, 1e2)
     # h_lxy = hist.new.Reg(1000000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
     lxy_range = (0, 7.5)
@@ -196,6 +230,4 @@ finally:
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
     pickle.dump(lxy_range, pickleOut)
-
-
-
+'''
