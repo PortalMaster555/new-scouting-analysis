@@ -147,8 +147,8 @@ h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").D
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
-# for i in tqdm(range(10)):
-for i in tqdm(range(len(events))):  
+for i in tqdm(range(50)):
+# for i in tqdm(range(len(events))):  
     print("~~~~~~~~~")
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
     print("Num Muons:", nMuons)
@@ -179,6 +179,11 @@ for i in tqdm(range(len(events))):
         vertexListByMuonIndex.append(vertexSlice)
     # print("*  End  *")
     vertexArrayByMuonIndex = ak.Array(vertexListByMuonIndex)
+    # flatten a bit using really weird syntax
+    vertexArrayByMuonIndex = ak.Array([
+        None if len(subarray) == 0 else subarray[0] if len(subarray) == 1 else subarray
+        for subarray in vertexArrayByMuonIndex
+    ])
     print("Vertices:", vertexArrayByMuonIndex)
 
 
