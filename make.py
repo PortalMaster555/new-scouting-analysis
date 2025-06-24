@@ -149,7 +149,7 @@ oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
 # for i in tqdm(range(10)):
 rejected = 0
-for i in tqdm(range(0, len(events))):  
+for i in tqdm(range(4099, len(events))):  # 4100 first instance of [[0, 1], [0, 1, 2], [0, 1, 2]]
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
 
     print("~~~~~~~~~")
@@ -178,7 +178,7 @@ for i in tqdm(range(0, len(events))):
         -999 if len(subarray) == 0 else subarray[0] if len(subarray) == 1 else subarray
         for subarray in vertexArrayByMuonIndex
     ])
-    print("Vertices:", vertexArrayByMuonIndex)
+    print("%d Vertices:"%(i), vertexArrayByMuonIndex)
 
     # get indices of non-None entries (i.e. the proper vertices)
     # nonNoneIndices = ak.where(~ak.is_none(vertexArrayByMuonIndex))[0]
