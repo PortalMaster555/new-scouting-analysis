@@ -55,13 +55,17 @@ finally:
         selected_branches.append("ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON))
         selected_branches.append("ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON))
 
-        selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_x")
-        selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_y")
-        selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_z")
+        # Selection
+        selected_branches.append("ScoutingMuon%sDisplacedVertex_chi2"%(MUON))
+        selected_branches.append("ScoutingMuon%sDisplacedVertex_ndof"%(MUON))
 
-        selected_branches.append("ScoutingMuonNoVtx_trk_vx")
-        selected_branches.append("ScoutingMuonNoVtx_trk_vy")
-        selected_branches.append("ScoutingMuonNoVtx_trk_vz")
+        selected_branches.append("ScoutingMuon%sDisplacedVertex_x"%(MUON))
+        selected_branches.append("ScoutingMuon%sDisplacedVertex_y"%(MUON))
+        selected_branches.append("ScoutingMuon%sDisplacedVertex_z"%(MUON))
+
+        selected_branches.append("ScoutingMuon%s_trk_vx"%(MUON))
+        selected_branches.append("ScoutingMuon%s_trk_vy"%(MUON))
+        selected_branches.append("ScoutingMuon%s_trk_vz"%(MUON))
 
         selected_branches.append("nScoutingPrimaryVertex")
         selected_branches.append("ScoutingPrimaryVertex_x")
@@ -180,9 +184,11 @@ for i in tqdm(range(4099, len(events))):  # 4100 first instance of [[0, 1], [0, 
     ])
     print("%d Vertices:"%(i), vertexArrayByMuonIndex)
 
-    # get indices of non-None entries (i.e. the proper vertices)
-    # nonNoneIndices = ak.where(~ak.is_none(vertexArrayByMuonIndex))[0]
-    # maxVertexIdx = ak.max(vertexArrayByMuonIndex)
+    ### choice code for multiple vertices
+    print("chi^2:", events["ScoutingMuon%sDisplacedVertex_chi2"%(MUON)][i])
+    print("ndof:", events["ScoutingMuon%sDisplacedVertex_ndof"%(MUON)][i])
+
+    ###
 
     # stopgap
     try:
@@ -191,7 +197,7 @@ for i in tqdm(range(4099, len(events))):  # 4100 first instance of [[0, 1], [0, 
         print("Iteration %d failed due to a ValueError (you have to make a choice for the vertex!)"%(i))
         rejected += 1
         continue
-    print(maxVertexIdx)
+    print("maxVertexIdx value is:", maxVertexIdx)
     indexArray = []
     for vertexIdx in range(maxVertexIdx + 1):
         # ak.where returns a tuple -> unpack
