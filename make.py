@@ -196,11 +196,28 @@ for i in tqdm(range(4080, len(events))):
 
     '''This is about to get really ugly'''
     isGoodVertex = ak.Array([
-        False if score > 10 else True
+        # False if score > 10 else True
+        False if score > 1 else True # extremely aggressive cut for demonstration purposes
         for score in scores
     ])
     print("isGoodVertex:", isGoodVertex)
+    bestScore = ak.min(scores)
+    bestScoreIdx = ak.argmin(scores)
+    print("Minimum of scores", bestScore, bestScoreIdx)
 
+    print("TO-DO: FILTER VERTICES BY SCORE FOR SCALAR ARRAYS")
+    if ak.num(vertexArrayByMuonIndex, axis=1, highlevel=False) is None: # if a scalar array (good)
+        for muon_idx, vertexNumber in enumerate(vertexArrayByMuonIndex):
+            if not isGoodVertex[vertexNumber]:
+                vertexArrayByMuonIndex[muon_idx] = -999
+    else:
+        for muon_idx, subelement in enumerate(vertexArrayByMuonIndex):
+            if isGoodVertex[muon_idx] and ak.any(subelement == bestScoreIdx):
+                vertexArrayByMuonIndex[muon_idx] = bestScoreIdx
+            else: # if it is not a good vertex or if it does not contain the best vertex
+                vertexArrayByMuonIndex[muon_idx] = -999
+
+    print(vertexArrayByMuonIndex)
 
     ###
 
@@ -220,7 +237,7 @@ for i in tqdm(range(4080, len(events))):
         # print("Index Array:", indexArray)
         # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
         # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
-
+    print(indexArray)
 
     # From https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideOfflinePrimaryVertexProduction:
     '''
