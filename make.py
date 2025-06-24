@@ -186,6 +186,14 @@ for i in tqdm(range(50)):
     ])
     print("Vertices:", vertexArrayByMuonIndex)
 
+    # get indices of non-None entries (i.e. the proper vertices)
+    # nonNoneIndices = ak.where(~ak.is_none(vertexArrayByMuonIndex))[0]
+    maxVertexIdx = ak.max(ak.drop_none(vertexArrayByMuonIndex))
+    indexArray = []
+    for vertexIdx in range(maxVertexIdx + 1):
+        indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx))
+    # indexArray = ak.Array(indexArray)
+    # print("Index Array:", indexArray)
 
 ##################################################
 '''
