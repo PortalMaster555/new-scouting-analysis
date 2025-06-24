@@ -147,27 +147,21 @@ h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").D
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
-for i in tqdm(range(10)):
-# for i in tqdm(range(len(events))):  
-    print("~~~~~~~~~")
+# for i in tqdm(range(10)):
+for i in tqdm(range(55, len(events))):  
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
+
+    print("~~~~~~~~~")
     print("Num Muons:", nMuons)
     print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
-    # print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
     print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
     print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
-
     print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
 
-    # print(nVtxIndxString, i, events[nVtxIndxString][i])
-    # print(oVtxIndxString, i, events[oVtxIndxString][i])
-    # print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
-
-    # print("* Begin *")
     vertexListByMuonIndex = [] # corresponds directly to, for example, charge entries
     oVtxIndxArray = events[oVtxIndxString][i]
     for n in range(nMuons):
-        # print("The %dth entry in oVtxIndxArray is:"%(n), oVtxIndxArray[n])
+        print("The %dth entry in oVtxIndxArray is:"%(n), oVtxIndxArray[n])
         current_offset = oVtxIndxArray[n]
         if n != (nMuons-1): # if NOT the final entry, use explicit list slicing
             # print("%d is not the final entry"%(n))
@@ -175,9 +169,8 @@ for i in tqdm(range(10)):
             vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset:next_offset] # exclusive
         else: # if it is the final entry, go to end of list
             vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset::]
-        # print("Vertex Slice for %d is:"%(n), vertexSlice)
+        print("Vertex Slice for %d is:"%(n), vertexSlice)
         vertexListByMuonIndex.append(vertexSlice)
-    # print("*  End  *")
     vertexArrayByMuonIndex = ak.Array(vertexListByMuonIndex)
     # flatten a bit using really weird syntax
     vertexArrayByMuonIndex = ak.Array([
@@ -194,26 +187,41 @@ for i in tqdm(range(10)):
         # ak.where returns a tuple -> unpack
         indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
     indexArray = ak.Array(indexArray)
-    print("Index Array:", indexArray)
+    # print("Index Array:", indexArray)
     # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
     # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
 
-    print("TO-DO: FILTER THE CORRECT PV FROM THE LIST OF SIZE:", events["nScoutingPrimaryVertex"][i])
-    pv_x = events["ScoutingPrimaryVertex_x"][i]
-    pv_y = events["ScoutingPrimaryVertex_y"][i]
-    print("PV_x", pv_x)
-    print("PV_y", pv_y)
-    print("TO-DO: GET CORRECT DISPLACED VERTEX FROM LIST")
+
+    # From https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideOfflinePrimaryVertexProduction:
+    '''
+        The primary vertex collection is sorted according to the sum of the Pt squared of the tracks associated to each vertex,
+            such that the vertex with largest sum, likely to be the "signal" vertex, appears first.
+            Some justification of this can be found in the Higgs note CMS-AN-11-129. 
+    '''
+
+    # get best PV according to sum(pt**2):
+    pv_x = events["ScoutingPrimaryVertex_x"][i][0]
+    pv_y = events["ScoutingPrimaryVertex_y"][i][0]
+    # print("PV_x", pv_x)
+    # print("PV_y", pv_y)
 
     for j, indices in enumerate(indexArray):
         sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][j]
         sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][j]
-        print("SV_x %d is"%(j), sv_x)
-        print("SV_y %d is"%(j), sv_y)
+        # print("SV_x %d is"%(j), sv_x)
+        # print("SV_y %d is"%(j), sv_y)
+
+        dx = sv_x - pv_x
+        dy = sv_y - pv_y
+        lxy = np.sqrt(dx**2 + dy**2)
+        h_lxy.fill(lxy=lxy)
+
+with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
+    pickle.dump(h_lxy, pickleOut)
+    pickle.dump(lxy_range, pickleOut)
 
 ##################################################
 '''
-
             lowestEtas = events[f"ScoutingMuon{MUON}_eta"][i][indices]
             lowestPhis = events[f"ScoutingMuon{MUON}_phi"][i][indices]
             eta1, eta2 = lowestEtas[0], lowestEtas[1]
@@ -224,19 +232,4 @@ for i in tqdm(range(10)):
             deltaR = np.sqrt(deltaEta**2 + deltaPhi**2)
             if deltaR > 0.2: # remove duplicate muons
                 print("deltaR > 0.2.")
-                print("TO-DO: FILTER THE CORRECT PV FROM THE LIST OF SIZE:", events["nScoutingPrimaryVertex"][i])
-                pv_x = events["ScoutingPrimaryVertex_x"][i][0]
-                pv_y = events["ScoutingPrimaryVertex_y"][i][0]
-                print("TO-DO: GET CORRECT DISPLACED VERTEX FROM LIST")
-                sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][0]
-                sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][0]
-                
-                dx = sv_x - pv_x
-                dy = sv_y - pv_y
-                lxy = np.sqrt(dx**2 + dy**2)
-                h_lxy.fill(lxy=lxy)
-
-with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
-    pickle.dump(h_lxy, pickleOut)
-    pickle.dump(lxy_range, pickleOut)
 '''
