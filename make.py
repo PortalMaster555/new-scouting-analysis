@@ -147,8 +147,8 @@ h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").D
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
-for i in tqdm(range(10)):
-# for i in tqdm(range(len(events))):  
+# for i in tqdm(range(10)):
+for i in tqdm(range(len(events))):  
     print("~~~~~~~~~")
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
     print("Num Muons:", nMuons)
@@ -182,54 +182,9 @@ for i in tqdm(range(10)):
     print("Vertices:", vertexArrayByMuonIndex)
 
 
-
-
 ##################################################
 '''
 
-
-    # for i in tqdm(range(60)):
-    for i in tqdm(range(len(events))):
-        print("~~~~~~~~~")
-        print("Num Muons:", events["nScoutingMuon%s"%(MUON)][i])
-        print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
-        print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
-        print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
-        print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
-        print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
-
-        print("ScoutingMuon%s_trk_vx,vy,vz"%(MUON), 
-         events["ScoutingMuon%s_trk_vx"%(MUON)][i],
-         events["ScoutingMuon%s_trk_vy"%(MUON)][i],
-         events["ScoutingMuon%s_trk_vz"%(MUON)][i])
-        closestMuonIndex_2D_List = []
-        for vtxIndx in range(len(events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i])):
-            vertexX = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][vtxIndx]
-            vertexY = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][vtxIndx]
-            vertexZ = events["ScoutingMuon%sDisplacedVertex_z"%(MUON)][i][vtxIndx]
-            print("Vertex pos:", vertexX, vertexY, vertexZ)
-            offsetList = []
-            for j in range(len(events["ScoutingMuon%s_trk_vx"%(MUON)][i])):
-                trkX = events["ScoutingMuon%s_trk_vx"%(MUON)][i][j]
-                trkY = events["ScoutingMuon%s_trk_vy"%(MUON)][i][j]
-                trkZ = events["ScoutingMuon%s_trk_vz"%(MUON)][i][j]
-                dx = vertexX - trkX
-                dy = vertexY - trkY
-                dz = vertexZ - trkZ
-                r = np.sqrt(dx**2 + dy**2 + dz**2)
-                offsetList.append(r)
-            
-            # print(offsetList)
-            offsetArray = np.array(offsetList)
-            sorted_indices = np.argsort(offsetArray)
-            print(offsetArray[sorted_indices])
-            print(events[f"ScoutingMuon{MUON}_charge"][i][sorted_indices])
-            print(events[f"ScoutingMuon{MUON}_eta"][i][sorted_indices])
-            print(events[f"ScoutingMuon{MUON}_pt"][i][sorted_indices])
-            closestMuonIndex_2D_List.append(sorted_indices[:2])
-        print("Closest Indices:", closestMuonIndex_2D_List)
-
-        for indices in closestMuonIndex_2D_List:
             lowestEtas = events[f"ScoutingMuon{MUON}_eta"][i][indices]
             lowestPhis = events[f"ScoutingMuon{MUON}_phi"][i][indices]
             eta1, eta2 = lowestEtas[0], lowestEtas[1]
@@ -251,6 +206,7 @@ for i in tqdm(range(10)):
                 dy = sv_y - pv_y
                 lxy = np.sqrt(dx**2 + dy**2)
                 h_lxy.fill(lxy=lxy)
+
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
     pickle.dump(lxy_range, pickleOut)
