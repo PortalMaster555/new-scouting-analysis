@@ -51,6 +51,10 @@ finally:
         selected_branches.append("ScoutingMuon%sVtxIndx_vtxIndx"%(MUON))
         selected_branches.append("ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON))
 
+        # Access
+        selected_branches.append("ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON))
+        selected_branches.append("ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON))
+
         selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_x")
         selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_y")
         selected_branches.append("ScoutingMuonNoVtxDisplacedVertex_z")
@@ -90,13 +94,13 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
-for i in tqdm(range(20)):
+for i in tqdm(range(10)):
 # for i in tqdm(range(len(events))):  
     print("Now filtering by number of muons:")
     ## Filter by number of muons
     events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
     print(f"> Significant events with 2+ muons: {len(events)}") 
-    print(ak.fields(events[0])) # get list of fields again since i forgot
+    # print(ak.fields(events[0])) # get list of fields again since i forgot
     # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
 
     ## Filter by having a displaced vertex reconstruction
@@ -116,6 +120,11 @@ for i in tqdm(range(20)):
         events["ScoutingMuon%s_trk_vy"%(MUON)][i],
         events["ScoutingMuon%s_trk_vz"%(MUON)][i])
 
+    nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
+    oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
+    print(nVtxIndxString, i, events[nVtxIndxString][i])
+    print(oVtxIndxString, i, events[oVtxIndxString][i])
+    print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
 
 
 
