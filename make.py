@@ -94,34 +94,58 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
-print("Now filtering by number of muons:")
+print("* Allow |eta| < 2.4 *")
+# Remove muons where |eta| is greater than/eq to 2.4
+# mask_pt = events["ScoutingMuonNoVtx_pt"] >= 5
+mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
+# combined_mask = mask_pt & mask_eta
+combined_mask = mask_eta
+# print(combined_mask)
+muon_fields = [
+"_pt", "_eta", "_phi", "_charge",
+"_trk_vx", "_trk_vy", "_trk_vz"]
+
+for field in muon_fields:
+    key = f"ScoutingMuonNoVtx{field}"
+    # print(len(events[key]))
+    events[key] = events[key][combined_mask]
+events["nScoutingMuonNoVtx"] = ak.num(events["ScoutingMuonNoVtx_pt"])
+print("Filter by eta successful.")
+
+print("* Allow nMuons >= 2 *")
 ## Filter by number of muons
 events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
 print(f"> Significant events with 2+ muons: {len(events)}") 
 # print(ak.fields(events[0])) # get list of fields again since i forgot
 # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
 
+print("* Allow nDisplacedVertex >= 1 *")
 ## Filter by having a displaced vertex reconstruction
-events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] > 0]
+events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] >= 1]
 print(f"> Events with a displaced vertex reco: {len(events)}") 
 # events = events[events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)] == True]
 # print(f"> Events with a valid displaced vertex reco: {len(events)}") 
 
-# nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
+# Addtl. pre-filtering goes here.
 
+### BEGIN POST-FILTER ITERATION ###
+lxy_range = (0, 7.5)
+h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
+
+# nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
-for i in tqdm(range(3)):
+for i in tqdm(range(10)):
 # for i in tqdm(range(len(events))):  
     print("~~~~~~~~~")
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
     print("Num Muons:", nMuons)
     print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
-    print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
-    print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
+    # print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
+    print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
+    print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
 
-    # print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
-    # print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
+    print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
 
     # print(nVtxIndxString, i, events[nVtxIndxString][i])
     # print(oVtxIndxString, i, events[oVtxIndxString][i])
@@ -148,27 +172,9 @@ for i in tqdm(range(3)):
 
 
 
-
 ##################################################
 '''
-    lxy_range = (0, 7.5)
-    h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
 
-    ## Remove muons of pt less than 5 and |eta| greater than/eq to 2.4
-    mask_pt = events["ScoutingMuonNoVtx_pt"] >= 5
-    mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
-    combined_mask = mask_pt & mask_eta
-    # print(combined_mask)
-    muon_fields = [
-    "_pt", "_eta", "_phi", "_charge",
-    "_trk_vx", "_trk_vy", "_trk_vz"]
-    
-    for field in muon_fields:
-        key = f"ScoutingMuonNoVtx{field}"
-        # print(len(events[key]))
-        events[key] = events[key][combined_mask]
-    print("Keyscan end")
-    events["nScoutingMuonNoVtx"] = ak.num(events["ScoutingMuonNoVtx_pt"])
 ###
     print("Now filtering by number of muons:")
     ## Filter by number of muons
