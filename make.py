@@ -187,19 +187,20 @@ for i in tqdm(range(0, len(events))):
     # stopgap
     try:
         maxVertexIdx = ak.max(vertexArrayByMuonIndex)
-        print(maxVertexIdx)
-        indexArray = []
-        for vertexIdx in range(maxVertexIdx + 1):
-            # ak.where returns a tuple -> unpack
-            indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
-        indexArray = ak.Array(indexArray)
-        # print("Index Array:", indexArray)
-        # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
-        # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
     except ValueError:
         print("Iteration %d failed due to a ValueError (you have to make a choice for the vertex!)"%(i))
         rejected += 1
         continue
+    print(maxVertexIdx)
+    indexArray = []
+    for vertexIdx in range(maxVertexIdx + 1):
+        # ak.where returns a tuple -> unpack
+        indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
+    indexArray = ak.Array(indexArray)
+        # print("Index Array:", indexArray)
+        # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
+        # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
+
 
     # From https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideOfflinePrimaryVertexProduction:
     '''
