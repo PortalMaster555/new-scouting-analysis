@@ -94,31 +94,30 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
-for i in tqdm(range(10)):
+print("Now filtering by number of muons:")
+## Filter by number of muons
+events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
+print(f"> Significant events with 2+ muons: {len(events)}") 
+# print(ak.fields(events[0])) # get list of fields again since i forgot
+# print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
+
+## Filter by having a displaced vertex reconstruction
+events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] > 0]
+print(f"> Events with a displaced vertex reco: {len(events)}") 
+# events = events[events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)] == True]
+# print(f"> Events with a valid displaced vertex reco: {len(events)}") 
+
+
+for i in tqdm(range(3)):
 # for i in tqdm(range(len(events))):  
-    print("Now filtering by number of muons:")
-    ## Filter by number of muons
-    events = events[ events["nScoutingMuon%s"%(MUON)] > 1]
-    print(f"> Significant events with 2+ muons: {len(events)}") 
-    # print(ak.fields(events[0])) # get list of fields again since i forgot
-    # print(events[0]["nScoutingMuon%sDisplacedVertex"%(MUON)])
-
-    ## Filter by having a displaced vertex reconstruction
-    events = events[events["nScoutingMuon%sDisplacedVertex"%(MUON)] > 0]
-    print(f"> Events with a displaced vertex reco: {len(events)}") 
-
     print("~~~~~~~~~")
-    print("Num Muons:", events["nScoutingMuon%s"%(MUON)][i])
+    nMuons = events["nScoutingMuon%s"%(MUON)][i]
+    print("Num Muons:", nMuons)
     print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
     print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
     print("nScoutingMuon%s_VtxIndx:"%(MUON), events["nScoutingMuon%sVtxIndx"%(MUON)][i])
-    print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
-    print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
-
-    print("ScoutingMuon%s_trk_vx,vy,vz"%(MUON), 
-        events["ScoutingMuon%s_trk_vx"%(MUON)][i],
-        events["ScoutingMuon%s_trk_vy"%(MUON)][i],
-        events["ScoutingMuon%s_trk_vz"%(MUON)][i])
+    # print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
+    # print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
 
     nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
     oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
@@ -126,6 +125,24 @@ for i in tqdm(range(10)):
     print(oVtxIndxString, i, events[oVtxIndxString][i])
     print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
 
+    oVtxIndxArray = events[oVtxIndxString][i]
+    
+    print("* Begin *")
+    vertexListByMuonIndex = [] # corresponds directly to, for example, charge entries
+    for n in range(nMuons):
+        print("The %dth entry in oVtxIndxArray is:"%(n), oVtxIndxArray[n])
+        current_offset = oVtxIndxArray[n]
+        if n != (nMuons-1): # if NOT the final entry, use explicit list slicing
+            # print("%d is not the final entry"%(n))
+            next_offset = oVtxIndxArray[n+1]
+            vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset:next_offset] # exclusive
+        else: # if it is the final entry, go to end of list
+            vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset::]
+        print("Vertex Slice for %d is:"%(n), vertexSlice)
+        vertexListByMuonIndex.append(vertexSlice)
+    print("*  End  *")
+    vertexArrayByMuonIndex = ak.Array(vertexListByMuonIndex)
+    print(vertexArrayByMuonIndex)
 
 
 
@@ -133,12 +150,10 @@ for i in tqdm(range(10)):
 
 ##################################################
 '''
-    # lxy_range = (1e-5, 1e2)
-    # h_lxy = hist.new.Reg(1000000, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
     lxy_range = (0, 7.5)
     h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
 
-    ## Remove muons of pt less than 20 and |eta| greater than/eq to 2.4
+    ## Remove muons of pt less than 5 and |eta| greater than/eq to 2.4
     mask_pt = events["ScoutingMuonNoVtx_pt"] >= 5
     mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
     combined_mask = mask_pt & mask_eta
