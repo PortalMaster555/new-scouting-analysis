@@ -204,10 +204,12 @@ for i in tqdm(range(10)):
     print("PV_x", pv_x)
     print("PV_y", pv_y)
     print("TO-DO: GET CORRECT DISPLACED VERTEX FROM LIST")
-    sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i]
-    sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i]
-    print("SV_x", sv_x)
-    print("SV_y", sv_y)
+
+    for j, indices in enumerate(indexArray):
+        sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][j]
+        sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][j]
+        print("SV_x %d is"%(j), sv_x)
+        print("SV_y %d is"%(j), sv_y)
 
 ##################################################
 '''
