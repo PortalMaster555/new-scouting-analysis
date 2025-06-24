@@ -153,7 +153,7 @@ oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
 # for i in tqdm(range(10)):
 rejected = 0
-for i in tqdm(range(4099, len(events))):  # 4100 first instance of [[0, 1], [0, 1, 2], [0, 1, 2]]
+for i in tqdm(range(4080, len(events))):  # 4100 first instance of [[0, 1], [0, 1, 2], [0, 1, 2]]
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
 
     print("~~~~~~~~~")
