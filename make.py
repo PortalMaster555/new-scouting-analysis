@@ -267,12 +267,18 @@ for i in tqdm(range(4080, 4101)):
             
             invariant_mass = np.sqrt((E1 + E2)**2 - (px1 + px2)**2 - (py1 + py2)**2 - (pz1 + pz2)**2)
             print("Invariant mass in GeV is ", invariant_mass)
+            if (invariant_mass >= 2.4 and invariant_mass < 2.9) or (invariant_mass > 3.3 and invariant_mass <= 3.8):
+                h_lxy_sidebands.fill(lxy=lxy)
+            elif (invariant_mass >= 2.9 and invariant_mass <= 3.3):
+                h_lxy_peak.fill(lxy=lxy)
     except ValueError:
         rejected += 1
     print("Loop execution finished!")
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
     pickle.dump(lxy_range, pickleOut)
+    pickle.dump(h_lxy_peak, pickleOut)
+    pickle.dump(h_lxy_sidebands, pickleOut)
 
 print(rejected)
 ##################################################
