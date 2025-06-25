@@ -251,21 +251,25 @@ for i in tqdm(range(4080, 4101)):
             h_lxy.fill(lxy=lxy)
 
             # Compute invariant mass stuff
-            print(events["ScoutingMuon%s_pt"%(MUON)][i][indices])
+            pt1, pt2 = events["ScoutingMuon%s_pt"%(MUON)][i][indices]
+            eta1, eta2 = events["ScoutingMuon%s_eta"%(MUON)][i][indices]
+            phi1, phi2 = events["ScoutingMuon%s_phi"%(MUON)][i][indices]
 
-            # mu_mass = 0.105
-            # pz1 = pt1 * np.sinh(eta1)
-            # pz2 = pt2 * np.sinh(eta2)
-            # px1 = pt1 * np.cos(phi1)
-            # px2 = pt2 * np.cos(phi2)
-            # py1 = pt1 * np.sin(phi1)
-            # py2 = pt2 * np.sin(phi2)
-            # E1  = np.sqrt(px1**2 + py1**2 + pz1**2 + mu_mass**2)
-            # E2  = np.sqrt(px2**2 + py2**2 + pz2**2 + mu_mass**2)
+            mu_mass = 0.105
+            pz1 = pt1 * np.sinh(eta1)
+            pz2 = pt2 * np.sinh(eta2)
+            px1 = pt1 * np.cos(phi1)
+            px2 = pt2 * np.cos(phi2)
+            py1 = pt1 * np.sin(phi1)
+            py2 = pt2 * np.sin(phi2)
+            E1  = np.sqrt(px1**2 + py1**2 + pz1**2 + mu_mass**2)
+            E2  = np.sqrt(px2**2 + py2**2 + pz2**2 + mu_mass**2)
             
-            # invariant_mass = np.sqrt((E1 + E2)**2 - (px1 + px2)**2 - (py1 + py2)**2 - (pz1 + pz2)**2)
+            invariant_mass = np.sqrt((E1 + E2)**2 - (px1 + px2)**2 - (py1 + py2)**2 - (pz1 + pz2)**2)
+            print("Invariant mass in GeV is ", invariant_mass)
     except ValueError:
         rejected += 1
+    print("Loop execution finished!")
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
     pickle.dump(lxy_range, pickleOut)
