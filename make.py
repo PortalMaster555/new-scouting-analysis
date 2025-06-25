@@ -207,51 +207,47 @@ for i in tqdm(range(4080, 4101)):
     validVertices = validVertices[isGoodVertex] # Returns list of vertices that pass the score threshold.
     print("Now valid vertices:", validVertices)
 
-
     ###
 
     # stopgap
     try:
         maxVertexIdx = ak.max(vertexArrayByMuonIndex)
+        print("maxVertexIdx value is:", maxVertexIdx)
+        indexArray = []
+        for vertexIdx in range(maxVertexIdx + 1):
+            # ak.where returns a tuple -> unpack
+            indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
+        indexArray = ak.Array(indexArray)
+            # print("Index Array:", indexArray)
+            # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
+            # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
+        print("indexArray:", indexArray)
+
+        # From https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideOfflinePrimaryVertexProduction:
+        '''
+            The primary vertex collection is sorted according to the sum of the Pt squared of the tracks associated to each vertex,
+                such that the vertex with largest sum, likely to be the "signal" vertex, appears first.
+                Some justification of this can be found in the Higgs note CMS-AN-11-129. 
+        '''
+
+        # get best PV according to sum(pt**2):
+        pv_x = events["ScoutingPrimaryVertex_x"][i][0]
+        pv_y = events["ScoutingPrimaryVertex_y"][i][0]
+        # print("PV_x", pv_x)
+        # print("PV_y", pv_y)
+
+        for j, indices in enumerate(indexArray):
+            sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][j]
+            sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][j]
+            # print("SV_x %d is"%(j), sv_x)
+            # print("SV_y %d is"%(j), sv_y)
+
+            dx = sv_x - pv_x
+            dy = sv_y - pv_y
+            lxy = np.sqrt(dx**2 + dy**2)
+            h_lxy.fill(lxy=lxy)
     except ValueError:
-        print("Iteration %d failed due to a ValueError (you have to make a choice for the vertex!)"%(i))
         rejected += 1
-        continue
-    print("maxVertexIdx value is:", maxVertexIdx)
-    indexArray = []
-    for vertexIdx in range(maxVertexIdx + 1):
-        # ak.where returns a tuple -> unpack
-        indexArray.append(ak.where(vertexArrayByMuonIndex == vertexIdx)[0]) 
-    indexArray = ak.Array(indexArray)
-        # print("Index Array:", indexArray)
-        # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
-        # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
-    print(indexArray)
-
-    # From https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideOfflinePrimaryVertexProduction:
-    '''
-        The primary vertex collection is sorted according to the sum of the Pt squared of the tracks associated to each vertex,
-            such that the vertex with largest sum, likely to be the "signal" vertex, appears first.
-            Some justification of this can be found in the Higgs note CMS-AN-11-129. 
-    '''
-
-    # get best PV according to sum(pt**2):
-    pv_x = events["ScoutingPrimaryVertex_x"][i][0]
-    pv_y = events["ScoutingPrimaryVertex_y"][i][0]
-    # print("PV_x", pv_x)
-    # print("PV_y", pv_y)
-
-    for j, indices in enumerate(indexArray):
-        sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][j]
-        sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][j]
-        # print("SV_x %d is"%(j), sv_x)
-        # print("SV_y %d is"%(j), sv_y)
-
-        dx = sv_x - pv_x
-        dy = sv_y - pv_y
-        lxy = np.sqrt(dx**2 + dy**2)
-        h_lxy.fill(lxy=lxy)
-
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
     pickle.dump(lxy_range, pickleOut)
