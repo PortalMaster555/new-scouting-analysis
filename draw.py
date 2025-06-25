@@ -44,7 +44,7 @@ h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", labe
 from scipy.optimize import curve_fit
 
 def func(x, a, b):
-    return a * np.exp(-b*x)
+    return a * x**(-b)
 
 peak_bin_values = h_lxy_peak.values()
 peak_bin_centers = h_lxy_peak.axes[0].centers
@@ -61,7 +61,7 @@ sb_param, sb_param_cov = curve_fit(func, sidebands_bin_centers, sidebands_bin_va
 print("Peak params:", pk_param)
 print("Sideband params:", sb_param)
 
-x = np.linspace(0, 7.5, num = 750)
+x = np.linspace(1e-2, 7.5, num = 750)
 pk_y = func(x, pk_param[0], pk_param[1])
 sb_y = func(x, sb_param[0], sb_param[1])
 
@@ -80,8 +80,10 @@ yMax = 10**np.ceil(np.log10(nonzero_vals.max()))
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("lxy")
 ax.set_ylabel("Number of events")
+
 # ax.set_xscale("log")
 ax.set_yscale("log")
+
 fig.savefig("img/hist_lxy_temp_%s.png"%(MUON), dpi=300)
 
 
@@ -93,6 +95,7 @@ plt.style.use(hep.style.CMS)
 fig, ax = plt.subplots(figsize=(10,8))
 hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
 # h_lxy.plot(ax=ax, label="Full lxy")
+
 h_lxy_peak.plot(ax=ax, label="Peak mass lxy")
 h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
 
@@ -100,7 +103,7 @@ plt.plot(x, pk_y, label="Peak curvefit")
 plt.plot(x, sb_y, label="Sidebands curvefit")
 
 ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
-ax.set_xlim(0, 2.5)
+ax.set_xlim(1e-2, 7)
 # ax.set_xlim(lxy_range)
 bin_values = h_lxy_peak.values()
 # nonzero bin values only because many bins are 0
@@ -111,7 +114,9 @@ yMax = 10**np.ceil(np.log10(nonzero_vals.max()))
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("lxy")
 ax.set_ylabel("Number of events")
-# ax.set_xscale("log")
+
+ax.set_xscale("log")
 ax.set_yscale("log")
+
 ax.legend
 fig.savefig("img/hist_lxy_pk_side_%s.png"%(MUON), dpi=300)
