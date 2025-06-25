@@ -55,13 +55,14 @@ print(peak_bin_values)
 print(peak_bin_centers)
 # print(sidebands_bin_values)
 
-pk_param, pk_param_cov = curve_fit(func, peak_bin_centers, peak_bin_values)
-sb_param, sb_param_cov = curve_fit(func, sidebands_bin_centers, sidebands_bin_values)
+center_maximum = 21
+pk_param, pk_param_cov = curve_fit(func, peak_bin_centers[:center_maximum:], peak_bin_values[:center_maximum:])
+sb_param, sb_param_cov = curve_fit(func, sidebands_bin_centers[:center_maximum:], sidebands_bin_values[:center_maximum:])
 
 print("Peak params:", pk_param)
 print("Sideband params:", sb_param)
 
-x = np.linspace(1e-2, 7.5, num = 750)
+x = np.linspace(1e-2, peak_bin_centers[center_maximum-1], num = center_maximum) # where power law is strongest fit
 pk_y = func(x, pk_param[0], pk_param[1])
 sb_y = func(x, sb_param[0], sb_param[1])
 
@@ -99,8 +100,8 @@ hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
 h_lxy_peak.plot(ax=ax, label="Peak mass lxy")
 h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
 
-plt.plot(x, pk_y, label="Peak curvefit")
-plt.plot(x, sb_y, label="Sidebands curvefit")
+plt.plot(x, pk_y, label="Peak curvefit", color="blue")
+plt.plot(x, sb_y, label="Sidebands curvefit", color="red")
 
 ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
 ax.set_xlim(1e-2, 7)
