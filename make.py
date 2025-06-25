@@ -155,8 +155,8 @@ oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
 # for i in tqdm(range(10)):
 rejected = 0
-# for i in tqdm(len(events)):  
-for i in tqdm(range(4080, 4101)):  
+for i in tqdm(range(len(events))):  
+# for i in tqdm(range(4080, 4101)):  
     # 4100 first instance of [[0, 1], [0, 1, 2], [0, 1, 2]]
     # 4097 is interesting because it has -1,1,1,1 and [0,0] -> matches first two (nice test of the code!)
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
@@ -198,13 +198,12 @@ for i in tqdm(range(4080, 4101)):
     print("scores", scores)
 
     '''This is about to get really ugly'''
-    validVertices = ak.Array(np.sort(np.unique(ak.to_numpy(events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i]))))
+    validVertices = np.sort(np.unique(ak.to_numpy(events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])))
+    if len(validVertices) == 0:
+        continue
     print("Valid Vertices:", validVertices) # [0, 1, 2] for example
-    isGoodVertex = ak.Array([
-        False if score > 10 else True
-        # False if score > 1 else True # extremely aggressive cut for demonstration purposes
-        for score in scores
-    ])
+    isGoodVertex = [score <= 10 for score in scores]
+    
     print("Is a good vertex?", isGoodVertex)
     validVertices = validVertices[isGoodVertex] # Returns list of vertices that pass the score threshold.
     print("Now valid vertices:", validVertices)
