@@ -63,6 +63,10 @@ hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
 h_lxy_peak.plot(ax=ax, label="Peak mass lxy")
 h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
 
+hist = h_lxy_peak
+print(hist.values())  # are they all zero?
+print(hist.sum())     # is it zero?
+
 ax.legend(loc='center left', fontsize = 16, frameon = False, ncol=1)
 ax.set_xlim(lxy_range)
 bin_values = h_lxy.values()
