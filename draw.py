@@ -105,7 +105,8 @@ fig.savefig("img/hist_lxy_temp_%s.png"%(MUON), dpi=300)
 print("Plotting dual plot...")
 # Dual peak/sidebands plot
 plt.style.use(hep.style.CMS)
-fig, ax = plt.subplots(figsize=(10,8))
+fig, axes = plt.subplots(2, 1, gridspec_kw={'height_ratios': [4, 1], 'hspace': 0.1}, figsize=(12, 8), sharex=True)
+ax = axes[0]
 hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
 # h_lxy.plot(ax=ax, label="Full lxy")
 
@@ -126,26 +127,20 @@ yMax = 10**np.ceil(np.log10(nonzero_vals.max()))
 
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("lxy")
-ax.set_ylabel("Number of events")
+ax.set_ylabel("Number of events [norm.]")
 
 ax.set_xscale("linear")
 ax.set_yscale("log")
-'''
-textstr1 = (
-    "Peak " + r"$ax^{-b}$" + "\n"
-    r"$a=$" + f"{pk_a}\n"
-    r"$b=$" + f"{pk_b}\n"
-    "\nSidebands " + r"$ax^{-b}$" + "\n"
-    r"$a=$" + f"{sb_a}\n"
-    r"$b=$" + f"{sb_b}\n"
-)
-txt1 = ax.text(
-    0.70, 0.98, textstr1,
-    ha='right', va='top',
-    fontsize=12,
-    transform=ax.transAxes,
-    bbox=dict(boxstyle='square,pad=0.3', facecolor='white', edgecolor='black', linewidth=1.5),
-)
-'''
+
+ax = axes[1]
+ratioValues = peak_bin_values/sidebands_bin_values
+
+plt.plot(peak_bin_centers, ratioValues)
+
+ax.set_xlabel("lxy")
+ax.set_ylabel("Ratio [Peak/SBs]")
+
+ax.set_xscale("linear")
+ax.set_yscale("linear")
 
 fig.savefig("img/hist_lxy_pk_side_%s.png"%(MUON), dpi=300)
