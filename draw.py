@@ -57,9 +57,10 @@ sb_param, sb_param_cov = curve_fit(func, sidebands_bin_centers, sidebands_bin_va
 print("Peak params:", pk_param)
 print("Sideband params:", sb_param)
 
+x = np.linspace(0, 7, num = 700)
+pk_y = func(x, pk_param[0], pk_param[1])
+sb_y = func(x, sb_param[0], sb_param[1])
 
-
-'''
 plt.style.use(hep.style.CMS)
 fig, ax = plt.subplots(figsize=(10,8))
 hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
@@ -79,6 +80,9 @@ ax.set_ylabel("Number of events")
 ax.set_yscale("log")
 fig.savefig("img/hist_lxy_temp_%s.png"%(MUON), dpi=300)
 
+
+##### 
+
 print("Plotting dual plot...")
 # Dual peak/sidebands plot
 plt.style.use(hep.style.CMS)
@@ -87,6 +91,9 @@ hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
 # h_lxy.plot(ax=ax, label="Full lxy")
 h_lxy_peak.plot(ax=ax, label="Peak mass lxy")
 h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
+
+plt.plot(x, pk_y, label="Peak curvefit")
+plt.plot(x, sb_y, label="Sidebands curvefit")
 
 hist = h_lxy_peak
 print(hist.values())  # are they all zero?
@@ -108,4 +115,3 @@ ax.set_ylabel("Number of events")
 ax.set_yscale("log")
 ax.legend
 fig.savefig("img/hist_lxy_pk_side_%s.png"%(MUON), dpi=300)
-'''
