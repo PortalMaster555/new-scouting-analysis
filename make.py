@@ -154,6 +154,7 @@ h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", labe
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
 # for i in tqdm(range(10)):
+indexErrRejected = 0
 rejected = 0
 for i in tqdm(range(len(events))):  
 # for i in tqdm(range(4080, 4101)):  
@@ -203,9 +204,14 @@ for i in tqdm(range(len(events))):
         continue
     print("Valid Vertices:", validVertices) # [0, 1, 2] for example
     isGoodVertex = [score <= 10 for score in scores]
-    
+
     print("Is a good vertex?", isGoodVertex)
-    validVertices = validVertices[isGoodVertex] # Returns list of vertices that pass the score threshold.
+    try: 
+        validVertices = validVertices[isGoodVertex] # Returns list of vertices that pass the score threshold.
+    except IndexError: #Event 58005, any more?
+        print("Event %d threw an Index Error; Size of scores != size of vertex list"%(i))
+        continue
+        indexErrRejected +=1
     print("Now valid vertices:", validVertices)
 
     ###
@@ -279,7 +285,9 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickle
     pickle.dump(h_lxy_peak, pickleOut)
     pickle.dump(h_lxy_sidebands, pickleOut)
 
-print(rejected)
+print("score mismatches:", indexErrRejected) 
+print("many choice rejects: ", rejected)
+
 ##################################################
 '''
             lowestEtas = events[f"ScoutingMuon{MUON}_eta"][i][indices]
