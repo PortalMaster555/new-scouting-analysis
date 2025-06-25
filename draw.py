@@ -32,7 +32,7 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "rb") as pickle
     h_lxy = pickle.load(pickleIn)
     lxy_range = pickle.load(pickleIn)
     h_lxy_peak = pickle.load(pickleIn)
-    # h_lxy_sidebands = pickle.load(pickleIn)
+    h_lxy_sidebands = pickle.load(pickleIn)
 
 
 
@@ -41,19 +41,17 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "rb") as pickle
 h_lxy_sidebands = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_sidebands", label="lxy_sidebands").Double()
 h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", label="lxy_peak").Double()
 '''
-from scipy.optimize import curve_fit
-
 def func(x, a, b):
     return a * x**(-b)
 
 peak_bin_values = h_lxy_peak.values()
 peak_bin_centers = h_lxy_peak.axes[0].centers
-# sidebands_bin_values = h_lxy_sidebands.values()
-# sidebands_bin_centers = h_lxy_sidebands.axes[0].centers
+sidebands_bin_values = h_lxy_sidebands.values()
+sidebands_bin_centers = h_lxy_sidebands.axes[0].centers
 
 print(peak_bin_values)
 print(peak_bin_centers)
-# print(sidebands_bin_values)
+print(sidebands_bin_values)
 
 
 # fit in log space using np
@@ -67,8 +65,13 @@ pk_b = -slope
 x = np.linspace(peak_bin_centers[center_min], peak_bin_centers[center_max-1], num = center_max-center_min) # where power law is strongest fit
 pk_y = func(x, pk_a, pk_b)
 
-
-# sb_y = func(x, sb_param[0], sb_param[1])
+logx = np.log(sidebands_bin_centers[center_min:center_max])
+logy = np.log(sidebands_bin_values[center_min:center_max])
+slope, intercept = np.polyfit(logx, logy, 1)
+sb_a = np.exp(intercept)
+sb_b = -slope
+x = np.linspace(sidebands_bin_centers[center_min], sidebands_bin_centers[center_max-1], num = center_max-center_min) # where power law is strongest fit
+sb_y = func(x, sb_a, sb_b)
 
 plt.style.use(hep.style.CMS)
 fig, ax = plt.subplots(figsize=(10,8))
@@ -102,10 +105,10 @@ hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
 # h_lxy.plot(ax=ax, label="Full lxy")
 
 h_lxy_peak.plot(ax=ax, label="Peak mass lxy")
-# h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
+h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
 
 plt.plot(x, pk_y, label="Peak curvefit", color="blue")
-# plt.plot(x, sb_y, label="Sidebands curvefit", color="red")
+plt.plot(x, sb_y, label="Sidebands curvefit", color="red")
 
 ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
 ax.set_xlim(1e-2, 7)
@@ -128,8 +131,8 @@ textstr1 = (
     r"$a=$" + f"{pk_a}\n"
     r"$b=$" + f"{pk_b}\n"
     "\nSidebands " + r"$ax^{-b}$" + "\n"
-    # r"$a=$" + f"{sb_a}\n"
-    # r"$b=$" + f"{sb_b}\n"
+    r"$a=$" + f"{sb_a}\n"
+    r"$b=$" + f"{sb_b}\n"
 )
 txt1 = ax.text(
     0.70, 0.98, textstr1,
