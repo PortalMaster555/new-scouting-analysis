@@ -51,13 +51,17 @@ peak_bin_centers = h_lxy_peak.axes[0].centers
 sidebands_bin_values = h_lxy_sidebands.values()
 sidebands_bin_centers = h_lxy_sidebands.axes[0].centers
 
+print(peak_bin_values)
+print(peak_bin_centers)
+# print(sidebands_bin_values)
+
 pk_param, pk_param_cov = curve_fit(func, peak_bin_centers, peak_bin_values)
 sb_param, sb_param_cov = curve_fit(func, sidebands_bin_centers, sidebands_bin_values)
 
 print("Peak params:", pk_param)
 print("Sideband params:", sb_param)
 
-x = np.linspace(0, 7, num = 700)
+x = np.linspace(0, 7.5, num = 750)
 pk_y = func(x, pk_param[0], pk_param[1])
 sb_y = func(x, sb_param[0], sb_param[1])
 
@@ -94,10 +98,6 @@ h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
 
 plt.plot(x, pk_y, label="Peak curvefit")
 plt.plot(x, sb_y, label="Sidebands curvefit")
-
-hist = h_lxy_peak
-print(hist.values())  # are they all zero?
-print(hist.sum())     # is it zero?
 
 ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
 ax.set_xlim(0, 2.5)
