@@ -58,7 +58,6 @@ print("Plotting dual plot...")
 plt.style.use(hep.style.CMS)
 fig, ax = plt.subplots(figsize=(10,8))
 hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
-
 # h_lxy.plot(ax=ax, label="Full lxy")
 h_lxy_peak.plot(ax=ax, label="Peak mass lxy")
 h_lxy_sidebands.plot(ax=ax, label="Sidebands mass lxy")
@@ -67,12 +66,13 @@ hist = h_lxy_peak
 print(hist.values())  # are they all zero?
 print(hist.sum())     # is it zero?
 
-ax.legend(loc='center left', fontsize = 16, frameon = False, ncol=1)
-ax.set_xlim(lxy_range)
-bin_values = h_lxy.values()
+ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
+ax.set_xlim(0, 2.5)
+# ax.set_xlim(lxy_range)
+bin_values = h_lxy_peak.values()
 # nonzero bin values only because many bins are 0
 nonzero_vals = bin_values[bin_values > 0]
-yMin = 10**np.floor(np.log10(nonzero_vals.min()))
+yMin = 1
 yMax = 10**np.ceil(np.log10(nonzero_vals.max()))
 
 ax.set_ylim(yMin, yMax)
