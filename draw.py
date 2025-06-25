@@ -54,8 +54,8 @@ sidebands_bin_centers = h_lxy_sidebands.axes[0].centers
 print(peak_bin_values)
 print(peak_bin_centers)
 # print(sidebands_bin_values)
-center_minimum = 1
-center_maximum = 16
+center_minimum = 0
+center_maximum = 30
 pk_param, pk_param_cov = curve_fit(func, peak_bin_centers[center_minimum:center_maximum:], peak_bin_values[center_minimum:center_maximum:])
 sb_param, sb_param_cov = curve_fit(func, sidebands_bin_centers[center_minimum:center_maximum:], sidebands_bin_values[center_minimum:center_maximum:])
 
