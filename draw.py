@@ -116,8 +116,23 @@ ax.set_ylim(yMin, yMax)
 ax.set_xlabel("lxy")
 ax.set_ylabel("Number of events")
 
-ax.set_xscale("log")
+ax.set_xscale("linear")
 ax.set_yscale("log")
 
-ax.legend
+textstr1 = (
+    "Peak " + r"$ax^{-b}$" + "\n"
+    r"$a=$" + f"{pk_param[0]}\n"
+    r"$b=$" + f"{pk_param[1]}\n"
+    "\nSidebands " + r"$ax^{-b}$" + "\n"
+    r"$a=$" + f"{sb_param[0]}\n"
+    r"$b=$" + f"{sb_param[1]}\n"
+)
+txt1 = ax.text(
+    0.70, 0.98, textstr1,
+    ha='right', va='top',
+    fontsize=12,
+    transform=ax.transAxes,
+    bbox=dict(boxstyle='square,pad=0.3', facecolor='white', edgecolor='black', linewidth=1.5),
+)
+
 fig.savefig("img/hist_lxy_pk_side_%s.png"%(MUON), dpi=300)
