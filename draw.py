@@ -33,6 +33,7 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "rb") as pickle
     lxy_range = pickle.load(pickleIn)
     h_lxy_peak = pickle.load(pickleIn)
     h_lxy_sidebands = pickle.load(pickleIn)
+    h_mass = pickle.load(pickleIn)
 
 # normalize histograms
 pk_norm = h_lxy_peak.values().sum()
@@ -144,3 +145,26 @@ ax.set_xscale("linear")
 ax.set_yscale("linear")
 
 fig.savefig("img/hist_lxy_pk_side_%s.png"%(MUON), dpi=300)
+
+
+#####
+print("Plotting invariant mass")
+fig, ax = plt.subplots(figsize=(10,8))
+hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
+h_mass.plot(ax=ax)
+ax.set_xlim(2.4, 3.8)
+bin_values = h_mass.values()
+
+# nonzero bin values only because many bins are 0
+nonzero_vals = bin_values[bin_values > 0]
+yMin = 1
+yMax = 10**np.ceil(np.log10(nonzero_vals.max()))
+
+ax.set_ylim(yMin, yMax)
+ax.set_xlabel("Dimuon Mass (GeV)")
+ax.set_ylabel("Number of events")
+
+# ax.set_xscale("log")
+ax.set_yscale("log")
+
+fig.savefig("img/hist_mass_%s.png"%(MUON), dpi=300)
