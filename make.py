@@ -203,7 +203,7 @@ for i in tqdm(range(len(events))):
     if len(validVertices) == 0:
         continue
     # print("Valid Vertices:", validVertices) # [0, 1, 2] for example
-    isGoodVertex = [score <= 10 for score in scores]
+    isGoodVertex = [score <= 3 for score in scores]
 
     # print("Is a good vertex?", isGoodVertex)
     try: 
