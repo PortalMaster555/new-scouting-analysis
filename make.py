@@ -314,7 +314,9 @@ for i in tqdm(range(len(events))):
             invariant_mass = np.sqrt((E1 + E2)**2 - (px1 + px2)**2 - (py1 + py2)**2 - (pz1 + pz2)**2)
             h_mass.fill(mass=invariant_mass)
             # print("Invariant mass in GeV is ", invariant_mass)
-            if (invariant_mass >= 2.4 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.8):
+
+            # ~3.7 potential psi(2S) charmonium peak
+            if (invariant_mass >= 2.4 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.5):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
             elif (invariant_mass >= 3.0 and invariant_mass <= 3.2):
                 h_lxy_peak.fill(lxy_peak=lxy)
