@@ -59,6 +59,10 @@ finally:
         selected_branches.append("ScoutingMuon%sDisplacedVertex_chi2"%(MUON))
         selected_branches.append("ScoutingMuon%sDisplacedVertex_ndof"%(MUON))
 
+        selected_branches.append("ScoutingMuon%s_trk_hitPattern_hitCount"%(MUON))
+        selected_branches.append("ScoutingMuon%s_trk_chi2"%(MUON))
+        selected_branches.append("ScoutingMuon%s_trk_ndof"%(MUON))
+
         selected_branches.append("ScoutingMuon%sDisplacedVertex_x"%(MUON))
         selected_branches.append("ScoutingMuon%sDisplacedVertex_y"%(MUON))
         selected_branches.append("ScoutingMuon%sDisplacedVertex_z"%(MUON))
@@ -141,6 +145,12 @@ has_neg = ak.any(charges < 0, axis=1)
 keep_mask = has_pos & has_neg
 events = events[keep_mask]
 print(f"> Events with at least one pair of opposite charges: {len(events)}") 
+
+print(events["ScoutingMuon%s_charge"%(MUON)])
+print(events["ScoutingMuon%s_trk_hitPattern_hitCount"%(MUON)])
+print(events["ScoutingMuon%s_trk_chi2"%(MUON)])
+print(events["ScoutingMuon%s_trk_ndof"%(MUON)])
+
 
 # Addtl. pre-filtering goes here.
 
