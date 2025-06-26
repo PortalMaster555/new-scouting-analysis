@@ -128,7 +128,9 @@ print("Combined mask...", combined_mask)
 # print(combined_mask)
 muon_fields = [
 "_pt", "_eta", "_phi", "_charge",
-"_trk_vx", "_trk_vy", "_trk_vz"]
+"_trk_vx", "_trk_vy", "_trk_vz",
+"_nScoutingMuonNoVtxVtxIndx", "_oScoutingMuonNoVtxVtxIndx","_trk_hitPattern_hitCount",
+"_trk_chi2", "_trk_ndof"]
 
 for field in muon_fields:
     key = f"ScoutingMuonNoVtx{field}"
@@ -148,8 +150,6 @@ for branch in events.fields:
     print("  First 3 entries:")
     print(events[branch][:3])
     print()
-
-exit()
 
 ## Filter by number of muons
 print("*Allow nMuons >= 2*")
