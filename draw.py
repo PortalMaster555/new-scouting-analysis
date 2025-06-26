@@ -138,7 +138,7 @@ ratioValues = peak_bin_values/sidebands_bin_values
 plt.plot(peak_bin_centers, ratioValues)
 
 ax.set_xlabel("lxy")
-ax.set_ylabel("Ratio [Peak/SBs]")
+ax.set_ylabel("Ratio   \n[Peak/SBs]")
 
 ax.set_xscale("linear")
 ax.set_yscale("linear")
