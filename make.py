@@ -102,6 +102,17 @@ finally:
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
 
+for branch in events.fields:
+    print(f"{branch}:")
+    try:
+        print("Length per event:", ak.num(events[branch], axis=1))
+    except Exception as e:
+        print("  Could not compute axis 1 length per event:", e)
+        print("Length (Number of events?):", ak.num(events[branch], axis=0)) 
+    print("  First 3 entries:")
+    print(events[branch][:3])
+    print()
+
 
 # Remove muons where |eta| is greater than/eq to 2.4
 print("*Allow |eta| < 2.4*")
@@ -113,6 +124,7 @@ print("*Allow chi2/ndof <= 3*")
 mask_per_muon_score = (events["ScoutingMuon%s_trk_chi2"%(MUON)]/events["ScoutingMuon%s_trk_ndof"%(MUON)] <= 3)
 
 combined_mask = mask_eta & mask_track_hit_count & mask_per_muon_score
+print("Combined mask...", combined_mask)
 # print(combined_mask)
 muon_fields = [
 "_pt", "_eta", "_phi", "_charge",
@@ -123,8 +135,21 @@ for field in muon_fields:
     # print(len(events[key]))
     events[key] = events[key][combined_mask]
 events["nScoutingMuonNoVtx"] = ak.num(events["ScoutingMuonNoVtx_pt"])
-print("> Filter by eta, num. track hits successful.")
+print("> Filter by eta, num. track hits, per-muon score successful.")
 
+for branch in events.fields:
+    print(f"{branch}:")
+    try:
+        print("Length (Number of events?):", ak.num(events[branch], axis=0)) 
+        print("Length per event:", ak.num(events[branch], axis=1))
+    except Exception as e:
+        print("Length (Number of events?):", ak.num(events[branch], axis=0)) 
+        print("  Could not compute axis 1 length per event:", e)
+    print("  First 3 entries:")
+    print(events[branch][:3])
+    print()
+
+exit()
 
 ## Filter by number of muons
 print("*Allow nMuons >= 2*")
@@ -150,14 +175,13 @@ keep_mask = has_pos & has_neg
 events = events[keep_mask]
 print(f"> Events with at least one pair of opposite charges: {len(events)}") 
 
-print(events["ScoutingMuon%s_charge"%(MUON)])
-print(events["ScoutingMuon%s_trk_hitPattern_hitCount"%(MUON)])
-print(events["ScoutingMuon%s_trk_chi2"%(MUON)])
-print(events["ScoutingMuon%s_trk_ndof"%(MUON)])
-
+# print(events["ScoutingMuon%s_charge"%(MUON)])
+# print(events["ScoutingMuon%s_trk_hitPattern_hitCount"%(MUON)])
+# print(events["ScoutingMuon%s_trk_chi2"%(MUON)])
+# print(events["ScoutingMuon%s_trk_ndof"%(MUON)])
 
 # Addtl. pre-filtering goes here.
-
+exit()
 ### BEGIN POST-FILTER ITERATION ###
 lxy_range = (0, 7.5)
 h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
