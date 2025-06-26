@@ -161,18 +161,18 @@ for i in tqdm(range(len(events))):
     # 4100 first instance of [[0, 1], [0, 1, 2], [0, 1, 2]]
     # 4097 is interesting because it has -1,1,1,1 and [0,0] -> matches first two (nice test of the code!)
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
-
+    '''
     print("~~~~~~~~~")
     print("Num Muons:", nMuons)
     print("Num Displaced Vertices:", events["nScoutingMuon%sDisplacedVertex"%(MUON)][i])
     print("ScoutingMuon%sVtxIndx_vtxIndx:"%(MUON), events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])
     print("ScoutingMuon%sDisplacedVertex_isValidVtx:"%(MUON), events["ScoutingMuon%sDisplacedVertex_isValidVtx"%(MUON)][i])
     print("Charges:", events["ScoutingMuon%s_charge"%(MUON)][i])
-
+    '''
     vertexListByMuonIndex = [] # corresponds directly to, for example, charge entries
     oVtxIndxArray = events[oVtxIndxString][i]
     for n in range(nMuons):
-        print("The %dth entry in oVtxIndxArray is:"%(n), oVtxIndxArray[n])
+        # print("The %dth entry in oVtxIndxArray is:"%(n), oVtxIndxArray[n])
         current_offset = oVtxIndxArray[n]
         if n != (nMuons-1): # if NOT the final entry, use explicit list slicing
             # print("%d is not the final entry"%(n))
@@ -180,7 +180,7 @@ for i in tqdm(range(len(events))):
             vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset:next_offset] # exclusive
         else: # if it is the final entry, go to end of list
             vertexSlice = events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i][current_offset::]
-        print("Vertex Slice for %d is:"%(n), vertexSlice)
+        # print("Vertex Slice for %d is:"%(n), vertexSlice)
         vertexListByMuonIndex.append(vertexSlice)
     vertexArrayByMuonIndex = ak.Array(vertexListByMuonIndex)
     # flatten a bit using really weird syntax
@@ -188,38 +188,38 @@ for i in tqdm(range(len(events))):
         -999 if len(subarray) == 0 else subarray[0] if len(subarray) == 1 else subarray
         for subarray in vertexArrayByMuonIndex
     ])
-    print("%d Vertices:"%(i), vertexArrayByMuonIndex)
+    # print("%d Vertices:"%(i), vertexArrayByMuonIndex)
 
     ### choice code for multiple vertices
     chi2s = events["ScoutingMuon%sDisplacedVertex_chi2"%(MUON)][i]
     ndofs = events["ScoutingMuon%sDisplacedVertex_ndof"%(MUON)][i]
     scores = chi2s/ndofs
-    print("chi^2:", chi2s)
-    print("ndof:", ndofs)
-    print("scores", scores)
+    # print("chi^2:", chi2s)
+    # print("ndof:", ndofs)
+    # print("scores", scores)
 
     '''This is about to get really ugly'''
     validVertices = np.sort(np.unique(ak.to_numpy(events["ScoutingMuon%sVtxIndx_vtxIndx"%(MUON)][i])))
     if len(validVertices) == 0:
         continue
-    print("Valid Vertices:", validVertices) # [0, 1, 2] for example
+    # print("Valid Vertices:", validVertices) # [0, 1, 2] for example
     isGoodVertex = [score <= 10 for score in scores]
 
-    print("Is a good vertex?", isGoodVertex)
+    # print("Is a good vertex?", isGoodVertex)
     try: 
         validVertices = validVertices[isGoodVertex] # Returns list of vertices that pass the score threshold.
     except IndexError: #Event 58005, any more?
         print("Event %d threw an Index Error; Size of scores != size of vertex list"%(i))
         continue
         indexErrRejected +=1
-    print("Now valid vertices:", validVertices)
+    # print("Now valid vertices:", validVertices)
 
     ###
 
     # stopgap
     try:
         maxVertexIdx = ak.max(vertexArrayByMuonIndex)
-        print("maxVertexIdx value is:", maxVertexIdx)
+        # print("maxVertexIdx value is:", maxVertexIdx)
         muonIndexArray = []
         for vertexIdx in range(maxVertexIdx + 1):
             # ak.where returns a tuple -> unpack
@@ -228,7 +228,7 @@ for i in tqdm(range(len(events))):
             # print("Index Array:", indexArray)
             # indexArray is of the form [[all indices for vtx 0], [all indices for vtx 1], ...]
             # so if vtx 0 is the vertex for two muons (for instance) then it is just [[0, 1]]
-        print("muonIndexArray:", muonIndexArray)
+        # print("muonIndexArray:", muonIndexArray)
 
         # From https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideOfflinePrimaryVertexProduction:
         '''
@@ -247,8 +247,8 @@ for i in tqdm(range(len(events))):
             # indices is the LIST OF MUON INDICES BELONGING TO EACH VERTEX
             sv_x = events["ScoutingMuon%sDisplacedVertex_x"%(MUON)][i][j]
             sv_y = events["ScoutingMuon%sDisplacedVertex_y"%(MUON)][i][j]
-            print("SV_x %d is"%(j), sv_x)
-            print("SV_y %d is"%(j), sv_y)
+            # print("SV_x %d is"%(j), sv_x)
+            # print("SV_y %d is"%(j), sv_y)
 
             dx = sv_x - pv_x
             dy = sv_y - pv_y
@@ -271,14 +271,14 @@ for i in tqdm(range(len(events))):
             E2  = np.sqrt(px2**2 + py2**2 + pz2**2 + mu_mass**2)
             
             invariant_mass = np.sqrt((E1 + E2)**2 - (px1 + px2)**2 - (py1 + py2)**2 - (pz1 + pz2)**2)
-            print("Invariant mass in GeV is ", invariant_mass)
-            if (invariant_mass >= 2.4 and invariant_mass < 2.9) or (invariant_mass > 3.3 and invariant_mass <= 3.8):
+            # print("Invariant mass in GeV is ", invariant_mass)
+            if (invariant_mass >= 2.4 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.8):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
-            elif (invariant_mass >= 2.9 and invariant_mass <= 3.3):
+            elif (invariant_mass >= 3.0 and invariant_mass <= 3.2):
                 h_lxy_peak.fill(lxy_peak=lxy)
     except ValueError:
         rejected += 1
-    print("Loop execution finished!")
+print("Loop execution finished!")
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
     pickle.dump(lxy_range, pickleOut)
