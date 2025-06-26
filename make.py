@@ -188,6 +188,8 @@ h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").D
 h_lxy_sidebands = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_sidebands", label="lxy_sidebands").Double()
 h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", label="lxy_peak").Double()
 
+h_mass = hist.new.Reg(100, 2.4, 3.8, name="mass", label="mass").Double()
+
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
@@ -310,6 +312,7 @@ for i in tqdm(range(len(events))):
             E2  = np.sqrt(px2**2 + py2**2 + pz2**2 + mu_mass**2)
             
             invariant_mass = np.sqrt((E1 + E2)**2 - (px1 + px2)**2 - (py1 + py2)**2 - (pz1 + pz2)**2)
+            h_mass.fill(mass=invariant_mass)
             # print("Invariant mass in GeV is ", invariant_mass)
             if (invariant_mass >= 2.4 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.8):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
@@ -323,6 +326,7 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickle
     pickle.dump(lxy_range, pickleOut)
     pickle.dump(h_lxy_peak, pickleOut)
     pickle.dump(h_lxy_sidebands, pickleOut)
+    pickle.dump(h_mass, pickleOut)
 
 print("score mismatches:", indexErrRejected) 
 print("many choice rejects: ", rejected)
