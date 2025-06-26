@@ -181,7 +181,7 @@ print(f"> Events with at least one pair of opposite charges: {len(events)}")
 # print(events["ScoutingMuon%s_trk_ndof"%(MUON)])
 
 # Addtl. pre-filtering goes here.
-exit()
+
 ### BEGIN POST-FILTER ITERATION ###
 lxy_range = (0, 7.5)
 h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").Double()
