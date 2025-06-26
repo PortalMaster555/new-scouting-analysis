@@ -76,6 +76,10 @@ finally:
         selected_branches.append("ScoutingPrimaryVertex_y")
         selected_branches.append("ScoutingPrimaryVertex_z")
 
+        selected_branches.append("ScoutingMuon%s_trk_dxy"%(MUON))
+        selected_branches.append("ScoutingMuon%s_trk_dxyError"%(MUON))
+
+
         files = glob.glob(f"{indir}/*.root")
         pickleIndex = 0
         for f in tqdm(files, desc="Progress"):
@@ -113,6 +117,7 @@ for branch in events.fields:
     print(events[branch][:3])
     print()
 
+exit()
 
 # Remove muons where |eta| is greater than/eq to 2.4
 print("*Allow |eta| < 2.4*")
