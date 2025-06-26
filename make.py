@@ -109,8 +109,10 @@ print("*Allow |eta| < 2.4*")
 mask_eta = (abs(events["ScoutingMuon%s_eta"%(MUON)]) < 2.4)
 print("*Allow at least 5 track hits")
 mask_track_hit_count = (events["ScoutingMuon%s_trk_hitPattern_hitCount"%(MUON)] >= 5)
-# combined_mask = mask_pt & mask_eta
-combined_mask = mask_eta & mask_track_hit_count
+print("*Allow chi2/ndof <= 3*")
+mask_per_muon_score = (events["ScoutingMuon%s_trk_chi2"%(MUON)]/events["ScoutingMuon%s_trk_ndof"%(MUON)] <= 3)
+
+combined_mask = mask_eta & mask_track_hit_count & mask_per_muon_score
 # print(combined_mask)
 muon_fields = [
 "_pt", "_eta", "_phi", "_charge",
@@ -222,8 +224,9 @@ for i in tqdm(range(len(events))):
         validVertices = validVertices[isGoodVertex] # Returns list of vertices that pass the score threshold.
     except IndexError: #Event 58005, any more?
         print("Event %d threw an Index Error; Size of scores != size of vertex list"%(i))
-        continue
         indexErrRejected +=1
+        continue
+        
     # print("Now valid vertices:", validVertices)
 
     ###
