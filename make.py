@@ -106,9 +106,11 @@ finally:
 # Remove muons where |eta| is greater than/eq to 2.4
 print("*Allow |eta| < 2.4*")
 # mask_pt = events["ScoutingMuonNoVtx_pt"] >= 5
-mask_eta = (abs(events["ScoutingMuonNoVtx_eta"]) < 2.4)
+mask_eta = (abs(events["ScoutingMuon%s_eta"%(MUON)]) < 2.4)
+print("*Allow at least 5 track hits")
+mask_track_hit_count = (events["ScoutingMuon%s_trk_hitPattern_hitCount"%(MUON)] >= 5)
 # combined_mask = mask_pt & mask_eta
-combined_mask = mask_eta
+combined_mask = mask_eta & mask_track_hit_count
 # print(combined_mask)
 muon_fields = [
 "_pt", "_eta", "_phi", "_charge",
@@ -119,7 +121,7 @@ for field in muon_fields:
     # print(len(events[key]))
     events[key] = events[key][combined_mask]
 events["nScoutingMuonNoVtx"] = ak.num(events["ScoutingMuonNoVtx_pt"])
-print("> Filter by eta successful.")
+print("> Filter by eta, num. track hits successful.")
 
 
 ## Filter by number of muons
