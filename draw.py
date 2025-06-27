@@ -152,7 +152,7 @@ print("Plotting invariant mass")
 fig, ax = plt.subplots(figsize=(10,8))
 hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
 h_mass.plot(ax=ax)
-ax.set_xlim(2.4, 3.5)
+ax.set_xlim(2.7, 3.5)
 bin_values = h_mass.values()
 
 # nonzero bin values only because many bins are 0

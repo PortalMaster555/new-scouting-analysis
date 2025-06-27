@@ -117,7 +117,7 @@ for branch in events.fields:
     print(events[branch][:3])
     print()
 
-exit()
+# exit()
 
 # Remove muons where |eta| is greater than/eq to 2.4
 print("*Allow |eta| < 2.4*")
@@ -193,7 +193,7 @@ h_lxy = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy", label="lxy").D
 h_lxy_sidebands = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_sidebands", label="lxy_sidebands").Double()
 h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", label="lxy_peak").Double()
 
-h_mass = hist.new.Reg(100, 2.4, 3.8, name="mass", label="mass").Double()
+h_mass = hist.new.Reg(100, 2.7, 3.5, name="mass", label="mass").Double()
 
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
@@ -321,7 +321,7 @@ for i in tqdm(range(len(events))):
             # print("Invariant mass in GeV is ", invariant_mass)
 
             # ~3.7 potential psi(2S) charmonium peak
-            if (invariant_mass >= 2.4 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.5):
+            if (invariant_mass >= 2.7 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.5):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
             elif (invariant_mass >= 3.0 and invariant_mass <= 3.2):
                 h_lxy_peak.fill(lxy_peak=lxy)
