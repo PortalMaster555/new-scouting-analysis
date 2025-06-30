@@ -170,3 +170,26 @@ ax.set_ylabel("Number of events")
 ax.set_yscale("log")
 
 fig.savefig("img/hist_mass_%s.png"%(MUON), dpi=300)
+
+
+
+
+#####
+print("Plotting dxy")
+fig, ax = plt.subplots(figsize=(10,8))
+hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
+h_dxy.plot(ax=ax)
+ax.set_xlim(0, 10)
+bin_values = h_dxy.values()
+
+yMin = 1
+yMax = 10**np.ceil(np.log10(bin_values.max()))
+
+ax.set_ylim(yMin, yMax)
+ax.set_xlabel("dxy (cm?)")
+ax.set_ylabel("Number of events")
+
+# ax.set_xscale("log")
+ax.set_yscale("log")
+
+fig.savefig("img/hist_dxy_%s.png"%(MUON), dpi=300)
