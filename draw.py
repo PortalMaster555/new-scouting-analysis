@@ -34,6 +34,8 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "rb") as pickle
     h_lxy_peak = pickle.load(pickleIn)
     h_lxy_sidebands = pickle.load(pickleIn)
     h_mass = pickle.load(pickleIn)
+    h_dxy = pickle.load(pickleIn)
+    h_dxyErr = pickle.load
 
 # normalize histograms
 pk_norm = h_lxy_peak.values().sum()
