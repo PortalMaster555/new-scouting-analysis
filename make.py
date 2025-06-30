@@ -135,7 +135,8 @@ muon_fields = [
 "_pt", "_eta", "_phi", "_charge",
 "_trk_vx", "_trk_vy", "_trk_vz",
 "_nScoutingMuonNoVtxVtxIndx", "_oScoutingMuonNoVtxVtxIndx","_trk_hitPattern_hitCount",
-"_trk_chi2", "_trk_ndof"]
+"_trk_chi2", "_trk_ndof",
+"_trk_dxy", "_trk_dxyError"]
 
 for field in muon_fields:
     key = f"ScoutingMuonNoVtx{field}"
@@ -195,6 +196,9 @@ h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", labe
 
 h_mass = hist.new.Reg(200, 2, 4, name="mass", label="mass").Double()
 
+h_dxy = hist.new.Reg(200, -10, 10, name="dxy", label="dxy").Double()
+h_dxyErr = hist.new.Reg(200, 0, 10, name="dxyErr", label="dxyErr").Double()
+
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
 
@@ -203,6 +207,7 @@ indexErrRejected = 0
 rejected = 0
 for i in tqdm(range(len(events))):  
 # for i in tqdm(range(4080, 4101)):  
+
     # 4100 first instance of [[0, 1], [0, 1, 2], [0, 1, 2]]
     # 4097 is interesting because it has -1,1,1,1 and [0,0] -> matches first two (nice test of the code!)
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
@@ -320,13 +325,20 @@ for i in tqdm(range(len(events))):
             h_mass.fill(mass=invariant_mass)
             # print("Invariant mass in GeV is ", invariant_mass)
 
+            dxy1, dxy2 = events["ScoutingMuon%s_trk_dxy"%(MUON)][i][indices]
+            dxyErr1, dxyErr2 = events["ScoutingMuon%s_trk_dxyError"%(MUON)][i][indices]
+
+            h_dxy.fill(dxy = dxy1); h_dxy.fill(dxy = dxy2)
+            h_dxyErr.fill(dxyErr = dxyErr1); h_dxyErr.fill(dxyErr = dxyErr2)
+
             # ~3.7 potential psi(2S) charmonium peak
             if (invariant_mass >= 2.7 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.5):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
             elif (invariant_mass >= 3.0 and invariant_mass <= 3.2):
                 h_lxy_peak.fill(lxy_peak=lxy)
-    except ValueError:
+    except ValueError as e:
         rejected += 1
+        print(e)
 print("Loop execution finished!")
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
@@ -334,6 +346,8 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickle
     pickle.dump(h_lxy_peak, pickleOut)
     pickle.dump(h_lxy_sidebands, pickleOut)
     pickle.dump(h_mass, pickleOut)
+    pickle.dump(h_dxy, pickleOut)
+    pickle.dump(h_dxyErr, pickleOut)
 
 print("score mismatches:", indexErrRejected) 
 print("many choice rejects: ", rejected)
