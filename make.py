@@ -203,6 +203,11 @@ indexErrRejected = 0
 rejected = 0
 for i in tqdm(range(len(events))):  
 # for i in tqdm(range(4080, 4101)):  
+    print("~")
+    print(events["ScoutingMuon%s_trk_dxy"%(MUON)][i])
+    print(events["ScoutingMuon%s_trk_dxyError"%(MUON)][i])
+    continue
+
     # 4100 first instance of [[0, 1], [0, 1, 2], [0, 1, 2]]
     # 4097 is interesting because it has -1,1,1,1 and [0,0] -> matches first two (nice test of the code!)
     nMuons = events["nScoutingMuon%s"%(MUON)][i]
