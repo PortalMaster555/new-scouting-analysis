@@ -332,9 +332,9 @@ for i in tqdm(range(len(events))):
             h_dxyErr.fill(dxyErr = dxyErr1); h_dxyErr.fill(dxyErr = dxyErr2)
 
             # ~3.7 potential psi(2S) charmonium peak
-            if (invariant_mass >= 2.7 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.5):
+            if (invariant_mass >= 2.6 and invariant_mass < 2.9) or (invariant_mass > 3.3 and invariant_mass <= 3.45):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
-            elif (invariant_mass >= 3.0 and invariant_mass <= 3.2):
+            elif (invariant_mass >= 3.05 and invariant_mass <= 3.15):
                 h_lxy_peak.fill(lxy_peak=lxy)
     except ValueError as e:
         rejected += 1
