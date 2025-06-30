@@ -200,7 +200,8 @@ yMin = 1
 yMax = 10**np.ceil(np.log10(h_ratio_pk.values().max()))
 
 ratioValues = np.abs(sidebands_bin_values)/sidebands_err_values
-h_ratio_sb = hist.new.Reg(100, 0, 100, name="ratio_sb", label="ratio_sb").Double()
+ax.set_xlim(0, 500)
+h_ratio_sb = hist.new.Reg(40, 0, 20, name="ratio_sb", label="ratio_sb").Double()
 for value in ratioValues:
     h_ratio_sb.fill(ratio_sb=value)
 h_ratio_sb.plot(ax=ax, label="Sideband ratio")
