@@ -201,8 +201,11 @@ h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", labe
 
 h_mass = hist.new.Reg(200, 2, 4, name="mass", label="mass").Double()
 
-h_dxy = hist.new.Reg(200, -10, 10, name="dxy", label="dxy").Double()
-h_dxyErr = hist.new.Reg(200, 0, 10, name="dxyErr", label="dxyErr").Double()
+h_dxy_peak = hist.new.Reg(20, -10, 10, name="dxy_peak", label="dxy_peak").Double()
+h_dxyErr_peak = hist.new.Reg(20, 0, 10, name="dxyErr_peak", label="dxyErr_peak").Double()
+
+h_dxy_sidebands = hist.new.Reg(20, -10, 10, name="dxy_sidebands", label="dxy_sidebands").Double()
+h_dxyErr_sidebands = hist.new.Reg(20, 0, 10, name="dxyErr_sidebands", label="dxyErr_sidebands").Double()
 
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
@@ -263,14 +266,14 @@ for i in tqdm(range(len(events))):
         continue
     # print("Valid Vertices:", validVertices) # [0, 1, 2] for example
     isGoodVertex = [score <= 3 for score in scores]
-    print("~")
-    print(isGoodVertex)
+    # print("~")
+    # print(isGoodVertex)
     isGoodVertex = ak.Array(isGoodVertex)
     isGoodVertex = isGoodVertex & (vertexXErrors <= 0.05)
     isGoodVertex = isGoodVertex & (vertexYErrors <= 0.05)
     isGoodVertex = isGoodVertex & (vertexZErrors <= 0.10)
     isGoodVertex = ak.to_list(isGoodVertex)
-    print(isGoodVertex)
+    # print(isGoodVertex)
     # print("Is a good vertex?", isGoodVertex)
     try: 
         validVertices = validVertices[isGoodVertex] # Returns list of vertices that pass the score threshold.
@@ -344,14 +347,21 @@ for i in tqdm(range(len(events))):
             dxy1, dxy2 = events["ScoutingMuon%s_trk_dxy"%(MUON)][i][indices]
             dxyErr1, dxyErr2 = events["ScoutingMuon%s_trk_dxyError"%(MUON)][i][indices]
 
-            h_dxy.fill(dxy = dxy1); h_dxy.fill(dxy = dxy2)
-            h_dxyErr.fill(dxyErr = dxyErr1); h_dxyErr.fill(dxyErr = dxyErr2)
 
             # ~3.7 potential psi(2S) charmonium peak
             if (invariant_mass >= 2.6 and invariant_mass < 2.9) or (invariant_mass > 3.3 and invariant_mass <= 3.45):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
+                h_dxy_sidebands.fill(dxy_sidebands = dxy1)
+                h_dxy_sidebands.fill(dxy_sidebands = dxy2)
+                h_dxyErr_sidebands.fill(dxyErr_sidebands = dxyErr1)
+                h_dxyErr_sidebands.fill(dxyErr_sidebands = dxyErr2)
+
             elif (invariant_mass >= 3.05 and invariant_mass <= 3.15):
                 h_lxy_peak.fill(lxy_peak=lxy)
+                h_dxy_peak.fill(dxy_peak = dxy1)
+                h_dxy_peak.fill(dxy_peak = dxy2)
+                h_dxyErr_peak.fill(dxyErr_peak = dxyErr1)
+                h_dxyErr_peak.fill(dxyErr_peak = dxyErr2)
     except ValueError as e:
         rejected += 1
         # print(e)
@@ -362,8 +372,10 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickle
     pickle.dump(h_lxy_peak, pickleOut)
     pickle.dump(h_lxy_sidebands, pickleOut)
     pickle.dump(h_mass, pickleOut)
-    pickle.dump(h_dxy, pickleOut)
-    pickle.dump(h_dxyErr, pickleOut)
+    pickle.dump(h_dxy_peak, pickleOut)
+    pickle.dump(h_dxyErr_peak, pickleOut)
+    pickle.dump(h_dxy_sidebands, pickleOut)
+    pickle.dump(h_dxyErr_sidebands, pickleOut)
 
 print("score mismatches:", indexErrRejected) 
 print("many choice rejects: ", rejected)
