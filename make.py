@@ -336,8 +336,9 @@ for i in tqdm(range(len(events))):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
             elif (invariant_mass >= 3.0 and invariant_mass <= 3.2):
                 h_lxy_peak.fill(lxy_peak=lxy)
-    except ValueError:
+    except ValueError as e:
         rejected += 1
+        print(e)
 print("Loop execution finished!")
 with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickleOut:
     pickle.dump(h_lxy, pickleOut)
