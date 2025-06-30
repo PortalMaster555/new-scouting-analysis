@@ -193,7 +193,7 @@ plt.scatter(peak_bin_centers, ratioValues, label="Peak")
 yMin = 1
 yMax = 10**np.ceil(np.log10(bin_values.max()))
 
-ratioValues = abs(sidebands_bin_values)/sidebands_err_values
+ratioValues = np.abs(sidebands_bin_values)/sidebands_err_values
 plt.scatter(peak_bin_centers, ratioValues, label="SB")
 
 
