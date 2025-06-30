@@ -329,7 +329,7 @@ for i in tqdm(range(len(events))):
             dxyErr1, dxyErr2 = events["ScoutingMuon%s_trk_dxyError"%(MUON)][i][indices]
 
             h_dxy.fill(dxy = dxy1); h_dxy.fill(dxy = dxy2)
-            h_dxyErr.fill(dxyErr = dxyErr1); h_dxy.fill(dxyErr = dxyErr2)
+            h_dxyErr.fill(dxyErr = dxyErr1); h_dxyErr.fill(dxyErr = dxyErr2)
 
             # ~3.7 potential psi(2S) charmonium peak
             if (invariant_mass >= 2.7 and invariant_mass < 3.0) or (invariant_mass > 3.2 and invariant_mass <= 3.5):
