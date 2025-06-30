@@ -88,25 +88,24 @@ finally:
 
             ## Filter by trigger
             #TrgOR
-            '''
             mask = ak.zeros_like(events[TRIGGER[0]], dtype=bool)
             for trigger in TRIGGER:
                 mask = np.array(mask) | np.array(events[trigger])
             events = events[mask]
-            '''
+            
             print(f"> {len(events)} events survive the filter") # 500_206 events survive from Vtx TrgOR
             # 356_664 events survive NoVtx TrgNoVtx
             print("~\nFirst event: events[0]")
             print(events[0])
-            with open (outdir+"/large_pickles/events%sPickleUnfiltered.pkl"%(MUON), "wb") as pickleOut:
+            with open (outdir+"/large_pickles/events%sPickle.pkl"%(MUON), "wb") as pickleOut:
                 pickle.dump(events, pickleOut)
             pickleIndex += 1
     else: # if not rereading the original unfiltered file
-        with open (outdir+"/large_pickles/events%sPickleUnfiltered.pkl"%(MUON), "rb") as pickleIn:
+        with open (outdir+"/large_pickles/events%sPickle.pkl"%(MUON), "rb") as pickleIn:
             events = pickle.load(pickleIn)
         print(f"> Opened filtered sample with {len(events)} events") # 500_206 events Vtx TrgOR, # 356_664 events NoVtx TrgNoVtx
 ###################################################
-'''
+
 for branch in events.fields:
     print(f"{branch}:")
     try:
@@ -180,7 +179,7 @@ has_neg = ak.any(charges < 0, axis=1)
 keep_mask = has_pos & has_neg
 events = events[keep_mask]
 print(f"> Events with at least one pair of opposite charges: {len(events)}") 
-'''
+
 # print(events["ScoutingMuon%s_charge"%(MUON)])
 # print(events["ScoutingMuon%s_trk_hitPattern_hitCount"%(MUON)])
 # print(events["ScoutingMuon%s_trk_chi2"%(MUON)])
