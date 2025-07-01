@@ -181,7 +181,7 @@ fig.savefig("img/hist_mass_%s.png"%(MUON), dpi=300)
 #####
 print("Plotting ratios of absdxy/err")
 fig, ax = plt.subplots(1, 1, gridspec_kw={'height_ratios': [1], 'hspace': 0.2}, figsize=(12, 8), sharex=True)
-hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
+hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=1)
 peak_bin_values = h_absdxy_peak.values()
 peak_err_values = h_dxyErr_peak.values()
 peak_bin_centers = h_absdxy_peak.axes[0].centers
@@ -200,11 +200,11 @@ hep.histplot(h_ratio_sb/h_ratio_sb.sum(), ax=ax, label="Sideband ratio", yerr=Fa
 print(sidebands_bin_values)
 print(sidebands_err_values)
 
-ax.set_xlim(1, 1e4)
+ax.set_xlim(0, 500)
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("dxy/err ratio")
 ax.set_ylabel("Number of events [normalized]")
 ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
-ax.set_xscale("log")
+ax.set_xscale("linear")
 ax.set_yscale("log")
 fig.savefig("img/hist_dxyratios_%s.png"%(MUON), dpi=300)
