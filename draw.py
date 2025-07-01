@@ -190,11 +190,11 @@ sidebands_bin_centers = h_dxy_sidebands.axes[0].centers
 print(np.abs(peak_bin_values))
 print(peak_err_values)
 ratioValues = np.abs(peak_bin_values)/peak_err_values
+print(len(ratioValues))
 h_ratio_pk = hist.new.Reg(40, 0, 20, name="ratio_pk", label="ratio_pk").Double()
 for value in ratioValues:
     h_ratio_pk.fill(ratio_pk=value)
-h_ratio_pk.plot(ax=ax, label="Peak ratio")
-
+hep.histplot(h_ratio_pk, ax=ax, label="Peak ratio", yerr=False)
 
 yMin = 1
 yMax = 10**np.ceil(np.log10(h_ratio_pk.values().max()))
@@ -204,7 +204,7 @@ ax.set_xlim(0, 20)
 h_ratio_sb = hist.new.Reg(40, 0, 20, name="ratio_sb", label="ratio_sb").Double()
 for value in ratioValues:
     h_ratio_sb.fill(ratio_sb=value)
-h_ratio_sb.plot(ax=ax, label="Sideband ratio")
+hep.histplot(h_ratio_sb, ax=ax, label="Sideband ratio", yerr=False)
 
 print(np.abs(sidebands_bin_values))
 print(sidebands_err_values)
