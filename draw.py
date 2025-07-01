@@ -196,7 +196,7 @@ for value in ratioValues:
     h_ratio_pk.fill(ratio_pk=value)
 hep.histplot(h_ratio_pk, ax=ax, label="Peak ratio", yerr=False)
 
-yMin = 1
+yMin = 0
 yMax = 10**np.ceil(np.log10(h_ratio_pk.values().max()))
 
 ratioValues = np.abs(sidebands_bin_values)/sidebands_err_values
@@ -213,8 +213,7 @@ print(sidebands_err_values)
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("dxy/err ratio")
 ax.set_ylabel("Number of events")
-ax.set_yscale("log")
 ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
 # ax.set_xscale("log")
-ax.set_yscale("log")
+ax.set_yscale("linear")
 fig.savefig("img/hist_dxyratios_%s.png"%(MUON), dpi=300)
