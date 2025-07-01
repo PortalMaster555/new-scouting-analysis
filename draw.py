@@ -189,13 +189,13 @@ sidebands_bin_values = h_absdxy_sidebands.values()
 sidebands_err_values = h_dxyErr_sidebands.values()
 sidebands_bin_centers = h_absdxy_sidebands.axes[0].centers
 
-hep.histplot(h_ratio_pk, ax=ax, label="Peak ratio", yerr=False)
+hep.histplot(h_ratio_pk/h_ratio_pk.sum(), ax=ax, label="Peak ratio", yerr=False)
 
-yMin = 0.1
-yMax = 10**np.ceil(np.log10(h_ratio_pk.values().max()))
+yMin = 0.1/h_ratio_pk.sum()
+yMax = 1
 ratioValues = sidebands_bin_values/sidebands_err_values
 
-hep.histplot(h_ratio_sb, ax=ax, label="Sideband ratio", yerr=False)
+hep.histplot(h_ratio_sb/h_ratio_sb.sum(), ax=ax, label="Sideband ratio", yerr=False)
 
 print(sidebands_bin_values)
 print(sidebands_err_values)
@@ -203,7 +203,7 @@ print(sidebands_err_values)
 ax.set_xlim(1, 1e4)
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("dxy/err ratio")
-ax.set_ylabel("Number of events")
+ax.set_ylabel("Number of events [normalized]")
 ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
 ax.set_xscale("log")
 ax.set_yscale("log")
