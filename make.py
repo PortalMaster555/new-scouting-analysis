@@ -201,11 +201,14 @@ h_lxy_peak = hist.new.Reg(100, lxy_range[0], lxy_range[1], name="lxy_peak", labe
 
 h_mass = hist.new.Reg(200, 2, 4, name="mass", label="mass").Double()
 
-h_dxy_peak = hist.new.Reg(20, -10, 10, name="dxy_peak", label="dxy_peak").Double()
-h_dxyErr_peak = hist.new.Reg(20, 0, 10, name="dxyErr_peak", label="dxyErr_peak").Double()
+h_absdxy_peak = hist.new.Reg(20, 0, 20, name="absdxy_peak", label="absdxy_peak").Double()
+h_dxyErr_peak = hist.new.Reg(20, 0, 20, name="dxyErr_peak", label="dxyErr_peak").Double()
 
-h_dxy_sidebands = hist.new.Reg(20, -10, 10, name="dxy_sidebands", label="dxy_sidebands").Double()
-h_dxyErr_sidebands = hist.new.Reg(20, 0, 10, name="dxyErr_sidebands", label="dxyErr_sidebands").Double()
+h_absdxy_sidebands = hist.new.Reg(20, 0, 20, name="absdxy_sidebands", label="absdxy_sidebands").Double()
+h_dxyErr_sidebands = hist.new.Reg(20, 0, 20, name="dxyErr_sidebands", label="dxyErr_sidebands").Double()
+
+h_ratio_pk = hist.new.Reg(1000, 0, 1e4, name="ratio_pk", label="ratio_pk").Double()
+h_ratio_sb = hist.new.Reg(1000, 0, 1e4, name="ratio_sb", label="ratio_sb").Double()
 
 # nVtxIndxString = "ScoutingMuon%s_nScoutingMuon%sVtxIndx" % (MUON, MUON)
 oVtxIndxString = "ScoutingMuon%s_oScoutingMuon%sVtxIndx" % (MUON, MUON)
@@ -351,17 +354,21 @@ for i in tqdm(range(len(events))):
             # ~3.7 potential psi(2S) charmonium peak
             if (invariant_mass >= 2.6 and invariant_mass < 2.9) or (invariant_mass > 3.3 and invariant_mass <= 3.45):
                 h_lxy_sidebands.fill(lxy_sidebands=lxy)
-                h_dxy_sidebands.fill(dxy_sidebands = dxy1)
-                h_dxy_sidebands.fill(dxy_sidebands = dxy2)
+                h_absdxy_sidebands.fill(absdxy_sidebands = np.abs(dxy1))
+                h_absdxy_sidebands.fill(absdxy_sidebands = np.abs(dxy2))
                 h_dxyErr_sidebands.fill(dxyErr_sidebands = dxyErr1)
                 h_dxyErr_sidebands.fill(dxyErr_sidebands = dxyErr2)
+                h_ratio_sb.fill(np.abs(dxy1)/dxyErr1)
+                h_ratio_sb.fill(np.abs(dxy2)/dxyErr2)
 
             elif (invariant_mass >= 3.05 and invariant_mass <= 3.15):
                 h_lxy_peak.fill(lxy_peak=lxy)
-                h_dxy_peak.fill(dxy_peak = dxy1)
-                h_dxy_peak.fill(dxy_peak = dxy2)
+                h_absdxy_peak.fill(absdxy_peak = np.abs(dxy1))
+                h_absdxy_peak.fill(absdxy_peak = np.abs(dxy2))
                 h_dxyErr_peak.fill(dxyErr_peak = dxyErr1)
                 h_dxyErr_peak.fill(dxyErr_peak = dxyErr2)
+                h_ratio_pk.fill(np.abs(dxy1)/dxyErr1)
+                h_ratio_pk.fill(np.abs(dxy2)/dxyErr2)
     except ValueError as e:
         rejected += 1
         # print(e)
@@ -372,10 +379,12 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "wb") as pickle
     pickle.dump(h_lxy_peak, pickleOut)
     pickle.dump(h_lxy_sidebands, pickleOut)
     pickle.dump(h_mass, pickleOut)
-    pickle.dump(h_dxy_peak, pickleOut)
+    pickle.dump(h_absdxy_peak, pickleOut)
     pickle.dump(h_dxyErr_peak, pickleOut)
-    pickle.dump(h_dxy_sidebands, pickleOut)
+    pickle.dump(h_absdxy_sidebands, pickleOut)
     pickle.dump(h_dxyErr_sidebands, pickleOut)
+    pickle.dump(h_ratio_pk, pickleOut)
+    pickle.dump(h_ratio_sb, pickleOut)
 
 print("score mismatches:", indexErrRejected) 
 print("many choice rejects: ", rejected)

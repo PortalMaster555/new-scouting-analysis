@@ -34,10 +34,12 @@ with open (outdir+"/large_pickles/events%sLxyPickle.pkl"%(MUON), "rb") as pickle
     h_lxy_peak = pickle.load(pickleIn)
     h_lxy_sidebands = pickle.load(pickleIn)
     h_mass = pickle.load(pickleIn)
-    h_dxy_peak = pickle.load(pickleIn)
+    h_absdxy_peak = pickle.load(pickleIn)
     h_dxyErr_peak = pickle.load(pickleIn)
-    h_dxy_sidebands = pickle.load(pickleIn)
+    h_absdxy_sidebands = pickle.load(pickleIn)
     h_dxyErr_sidebands = pickle.load(pickleIn)
+    h_ratio_pk = pickle.load(pickleIn)
+    h_ratio_sb = pickle.load(pickleIn)
 
 # normalize histograms
 pk_norm = h_lxy_peak.values().sum()
@@ -180,36 +182,25 @@ fig.savefig("img/hist_mass_%s.png"%(MUON), dpi=300)
 print("Plotting ratios of absdxy/err")
 fig, ax = plt.subplots(1, 1, gridspec_kw={'height_ratios': [1], 'hspace': 0.2}, figsize=(12, 8), sharex=True)
 hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=2)
-peak_bin_values = h_dxy_peak.values()
+peak_bin_values = h_absdxy_peak.values()
 peak_err_values = h_dxyErr_peak.values()
-peak_bin_centers = h_dxy_peak.axes[0].centers
-sidebands_bin_values = h_dxy_sidebands.values()
+peak_bin_centers = h_absdxy_peak.axes[0].centers
+sidebands_bin_values = h_absdxy_sidebands.values()
 sidebands_err_values = h_dxyErr_sidebands.values()
-sidebands_bin_centers = h_dxy_sidebands.axes[0].centers
+sidebands_bin_centers = h_absdxy_sidebands.axes[0].centers
 
-print(np.abs(peak_bin_values))
-print(peak_err_values)
-ratioValues = np.abs(peak_bin_values)/peak_err_values
-print(len(ratioValues))
-h_ratio_pk = hist.new.Reg(40, 0, 20, name="ratio_pk", label="ratio_pk").Double()
-for value in ratioValues:
-    h_ratio_pk.fill(ratio_pk=value)
 hep.histplot(h_ratio_pk, ax=ax, label="Peak ratio", yerr=False)
 
 yMin = 0
 yMax = 10**np.ceil(np.log10(h_ratio_pk.values().max()))
+ratioValues = sidebands_bin_values/sidebands_err_values
 
-ratioValues = np.abs(sidebands_bin_values)/sidebands_err_values
-ax.set_xlim(0, 20)
-h_ratio_sb = hist.new.Reg(40, 0, 20, name="ratio_sb", label="ratio_sb").Double()
-for value in ratioValues:
-    h_ratio_sb.fill(ratio_sb=value)
 hep.histplot(h_ratio_sb, ax=ax, label="Sideband ratio", yerr=False)
 
-print(np.abs(sidebands_bin_values))
+print(sidebands_bin_values)
 print(sidebands_err_values)
 
-
+ax.set_xlim(0, 1e4)
 ax.set_ylim(yMin, yMax)
 ax.set_xlabel("dxy/err ratio")
 ax.set_ylabel("Number of events")
