@@ -208,3 +208,28 @@ ax.legend(loc='center right', fontsize = 16, frameon = False, ncol=1)
 ax.set_xscale("linear")
 ax.set_yscale("log")
 fig.savefig("img/hist_dxyratios_%s.png"%(MUON), dpi=300)
+
+
+#######
+# plotting cum. no. of events from x to infinity
+print("Plotting ratios of absdxy/err")
+fig, ax = plt.subplots(1, 1, gridspec_kw={'height_ratios': [1], 'hspace': 0.2}, figsize=(12, 8), sharex=True)
+hep.cms.label("Preliminary", data=True, year='2025', com='13.6', ax=ax, loc=1)
+
+peak_bin_centers = h_ratio_pk.axes[0].centers
+sidebands_bin_centers = h_ratio_sb.axes[0].centers
+
+h_norm_pk_ratio = h_ratio_pk/h_ratio_pk.sum()
+h_norm_sb_ratio = h_ratio_sb/h_ratio_sb.sum()
+
+reverse_cumulative_pk = np.cumsum(h_norm_pk_ratio.values()[::-1])[::-1]
+reverse_cumulative_sb = np.cumsum(h_norm_sb_ratio.values()[::-1])[::-1]
+
+plt.step(peak_bin_centers, reverse_cumulative_pk, where='mid', label="Peak Cumulative")
+plt.step(sidebands_bin_centers, reverse_cumulative_sb, where='mid', label="Sidebands Cumulative")
+plt.xlabel("Ratio")
+plt.ylabel("CDF (≥ x)")
+ax.set_xlim(0, 500)
+plt.grid(True)
+plt.legend()
+fig.savefig("img/hist_cumratio_%s.png"%(MUON), dpi=300)
